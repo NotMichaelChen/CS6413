@@ -62,7 +62,8 @@ bool expect(int token)
         return true;
     }
     Scanner::Token curtoken = Scanner::getToken();
-    std::cerr << "Error: unexpected token " << curtoken.code << " on line " << curtoken.line_number << std::endl;
+    std::cerr << "Error: unexpected token " << Scanner::getTokenStr() << " on line " << curtoken.line_number << std::endl;
+    exit(1);
     return false;
 }
 
@@ -107,7 +108,11 @@ void program()
             functiondef();
         }
         else
-            std::cerr << "Error: syntax error in 'program'" << std::endl;
+        {
+            std::cerr << "Error: syntax error in 'program', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+            exit(1);
+        }
     }
     //Must be decl
     else
@@ -140,7 +145,9 @@ bool kind()
         return true;
     else
     {
-        //std::cerr << "Error: syntax error in 'kind'" << std::endl;
+        std::cerr << "Error: syntax error in 'kind', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+        exit(1);
         return false;
     }
 }
@@ -194,8 +201,9 @@ void body()
     std::cin.ignore();
     expect(Scanner::LBRACE);
 
-    while(kind())
+    while(Scanner::getToken().code == Scanner::KW_INT || Scanner::getToken().code == Scanner::KW_FLOAT)
     {
+        kind();
         varlist();
         expect(Scanner::SEMICOLON);
     }
@@ -218,7 +226,7 @@ void stmt()
     if(accept(Scanner::KW_IF))
     {
         expect(Scanner::LPAR);
-        expr();
+        boolexpr();
         expect(Scanner::RPAR);
         stmt();
         if(accept(Scanner::KW_ELSE))
@@ -267,7 +275,11 @@ void writeexprlist()
     else if(first_expr(Scanner::getToken().code))
         expr();
     else
-        std::cerr << "Error: syntax error in 'writeexprlist'" << std::endl;
+    {
+        std::cerr << "Error: syntax error in 'writeexprlist', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+        exit(1);
+    }
 
     while(accept(Scanner::COMMA))
         expr();
@@ -295,7 +307,11 @@ void factor()
         }
     }
     else
-        std::cerr << "Error: syntax error in 'factor'" << std::endl;
+    {
+        std::cerr << "Error: syntax error in 'factor', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+        exit(1);
+    }
 }
 
 void boolexpr()
@@ -323,8 +339,8 @@ void term()
     std::cout << "In term" << std::endl;
     std::cin.ignore();
 
-        //Simply attempt to accept a minus, if you can't then just skip
-        accept(Scanner::OP_MINUS);
+    //Simply attempt to accept a minus, if you can't then just skip
+    accept(Scanner::OP_MINUS);
     factor();
     while(first_mulop(Scanner::getToken().code))
     {
@@ -344,7 +360,9 @@ void mulop()
         ;
     else
     {
-        std::cerr << "Error: syntax error in 'mulop'" << std::endl;
+        std::cerr << "Error: syntax error in 'mulop', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+        exit(1);
     }
 }
 
@@ -371,7 +389,9 @@ void addop()
         ;
     else
     {
-        std::cerr << "Error: syntax error in 'addop'" << std::endl;
+        std::cerr << "Error: syntax error in 'addop', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+        exit(1);
     }
 }
 
@@ -391,7 +411,9 @@ void boolop()
         ;
     else
     {
-        std::cerr << "Error: syntax error in 'boolop'" << std::endl;
+        std::cerr << "Error: syntax error in 'boolop', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+        exit(1);
     }
 }
 
@@ -422,5 +444,9 @@ void expr()
         expr1();
     }
     else
-        std::cerr << "Error: syntax error in 'expr'" << std::endl;
+    {
+        std::cerr << "Error: syntax error in 'expr', with token " << Scanner::getTokenStr() << " on line "
+                << Scanner::getToken().line_number << std::endl;
+        exit(1);
+    }
 }

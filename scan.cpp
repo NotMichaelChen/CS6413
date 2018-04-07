@@ -47,6 +47,77 @@ Token getToken()
     return token_stack.top();
 }
 
+std::string getTokenStr()
+{
+    switch(token_stack.top().code)
+    {
+        case 0:
+            return "EOF";
+        case KW_INT:
+            return "int";
+        case KW_FLOAT:
+            return "float";
+        case KW_IF:
+            return "if";
+        case KW_ELSE:
+            return "else";
+        case KW_WHILE:
+            return "while";
+        case KW_RETURN:
+            return "return";
+        case KW_READ:
+            return "read";
+        case KW_WRITE:
+            return "write";
+        case OP_PLUS:
+            return "+";
+        case OP_MINUS:
+            return "-";
+        case OP_MULT:
+            return "*";
+        case OP_DIV:
+            return "/";
+        case OP_ASSIGN:
+            return "=";
+        case OP_EQ:
+            return "==";
+        case OP_LT:
+            return "<";
+        case OP_LE:
+            return "<=";
+        case OP_GT:
+            return ">";
+        case OP_GE:
+            return ">=";
+        case LPAR:
+            return "(";
+        case RPAR:
+            return ")";
+        case LBRACE:
+            return "{";
+        case RBRACE:
+            return "}";
+        case SEMICOLON:
+            return ";";
+        case COMMA:
+            return ",";
+        case ID:
+            return "identifier";
+        case INT_LIT:
+            return "integer literal";
+        case FLOAT_LIT:
+            return "float literal";
+        case STRING_LIT:
+            return "string literal";
+        case WS_TOKEN:
+            return "white space";
+        case NL_TOKEN:
+            return "new line";
+        default:
+            return "";
+    }
+}
+
 void putToken(Token token)
 {
     token_stack.push(token);
