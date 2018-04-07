@@ -19,10 +19,10 @@ void stmt();
 void writeexprlist();
 void factor();
 void boolexpr();
-void functioncall(bool skip);
-void term(bool skip);
+void functioncall();
+void term();
 void mulop();
-void expr1(bool skip);
+void expr1();
 void addop();
 void boolop();
 void expr();
@@ -277,6 +277,7 @@ void factor()
 {
     std::cout << "In factor" << std::endl;
     std::cin.ignore();
+    Scanner::Token lookahead = Scanner::getToken();
     if(accept(Scanner::INT_LIT))
         ;
     else if(accept(Scanner::FLOAT_LIT))
@@ -288,7 +289,9 @@ void factor()
     {
         if(Scanner::getToken().code == Scanner::LPAR)
         {
-            functioncall(true);
+            //Put back ID for function-call
+            Scanner::putToken(lookahead);
+            functioncall();
         }
     }
     else
@@ -304,29 +307,24 @@ void boolexpr()
     expr();
 }
 
-void functioncall(bool skip)
+void functioncall()
 {
     std::cout << "In functioncall" << std::endl;
     std::cin.ignore();
-    if(!skip)
-    {
-        expect(Scanner::ID);
-    }
+
+    expect(Scanner::ID);
     expect(Scanner::LPAR);
     expr();
     expect(Scanner::RPAR);
 }
 
-void term(bool skip)
+void term()
 {
     std::cout << "In term" << std::endl;
     std::cin.ignore();
-    if(!skip)
-    {
+
         //Simply attempt to accept a minus, if you can't then just skip
         accept(Scanner::OP_MINUS);
-
-    }
     factor();
     while(first_mulop(Scanner::getToken().code))
     {
@@ -350,16 +348,16 @@ void mulop()
     }
 }
 
-void expr1(bool skip)
+void expr1()
 {
     std::cout << "In expr1" << std::endl;
     std::cin.ignore();
 
-    term(skip);
+    term();
     while(first_addop(Scanner::getToken().code))
     {
         addop();
-        term(false);
+        term();
     }
 }
 
@@ -401,24 +399,27 @@ void expr()
 {
     std::cout << "In expr" << std::endl;
     std::cin.ignore();
+    Scanner::Token lookahead = Scanner::getToken();
     //Could still be either case
     if(accept(Scanner::ID))
     {
         //Definitely first case
         if(accept(Scanner::OP_ASSIGN))
         {
+            //Don't put back the lookahead tokens, otherwise infinite recursion
             expr();
         }
         //Assume second case
         else
         {
-            expr1(true);
+            Scanner::putToken(lookahead);
+            expr1();
         }
     }
     //Definitely expr1 case
     else if(first_expr1(Scanner::getToken().code))
     {
-        expr1(false);
+        expr1();
     }
     else
         std::cerr << "Error: syntax error in 'expr'" << std::endl;
