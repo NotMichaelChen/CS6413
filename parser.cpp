@@ -1,17 +1,18 @@
 #include "parser.hpp"
 
 #include <iostream>
+#include <stack>
 
 #include "scan.hpp"
 #include "symbol.hpp"
 #include "first.hpp"
 
 void program();
-void decl(bool skip);
+void decl();
 bool kind();
-void varlist(bool skip);
-void functiondecl(bool skip);
-void functiondef(bool skip);
+void varlist();
+void functiondecl();
+void functiondef();
 void body();
 void stmt();
 //expr-list is unused
@@ -60,7 +61,7 @@ bool expect(int token)
     {
         return true;
     }
-    curtoken = Scanner.getToken();
+    Scanner::Token curtoken = Scanner::getToken();
     std::cerr << "Error: unexpected token " << curtoken.code << " on line " << curtoken.line_number << std::endl;
     return false;
 }
@@ -70,42 +71,61 @@ void program()
 {
     std::cout << "In program" << std::endl;
     std::cin.ignore();
+    //Create a stack so we can "rewind" read tokens
+    std::stack<Scanner::Token> rewind_stack;
     //First disambiguation after reading "kind" and "ID"
-    kind();
-    expect(Scanner::ID);
 
+    rewind_stack.push(Scanner::getToken());
+    //Didn't read a 'kind', didn't get new token, don't save this token
+    if(!kind())
+        rewind_stack.pop();
+
+    rewind_stack.push(Scanner::getToken());
+    if(!expect(Scanner::ID))
+        rewind_stack.pop();
+
+    rewind_stack.push(Scanner::getToken());
     //Either function-decl or function-def
     if(accept(Scanner::LPAR))
     {
         //Must read another "kind"
-        kind();
+        rewind_stack.push(Scanner::getToken());
+        if(!kind())
+            rewind_stack.pop();
 
         //Must be function-decl
+        rewind_stack.push(Scanner::getToken());
         if(accept(Scanner::RPAR))
-            functiondecl(true);
+        {
+            Scanner::rewind(rewind_stack);
+            functiondecl();
+        }
         //Must be function-def
         else if(accept(Scanner::ID))
-            functiondef(true);
+        {
+            Scanner::rewind(rewind_stack);
+            functiondef();
+        }
         else
             std::cerr << "Error: syntax error in 'program'" << std::endl;
     }
     //Must be decl
     else
-        decl(true);
+    {
+        rewind_stack.pop();
+        Scanner::rewind(rewind_stack);
+        decl();
+    }
 }
 
 //Skips kind if called from program
-void decl(bool skip)
+void decl()
 {
     std::cout << "In decl" << std::endl;
     std::cin.ignore();
-    if(!skip)
-    {
-        kind();
-        varlist(false);
-    }
-    else
-        varlist(true);
+
+    kind();
+    varlist();
 
     expect(Scanner::SEMICOLON);
 }
@@ -125,12 +145,12 @@ bool kind()
     }
 }
 
-void varlist(bool skip)
+void varlist()
 {
     std::cout << "In varlist" << std::endl;
     std::cin.ignore();
-    if(!skip)
-        expect(Scanner::ID);
+
+    expect(Scanner::ID);
 
     while(accept(Scanner::COMMA))
     {
@@ -138,35 +158,30 @@ void varlist(bool skip)
     }
 }
 
-void functiondecl(bool skip)
+void functiondecl()
 {
     std::cout << "In functiondecl" << std::endl;
     std::cin.ignore();
-    if(!skip)
-    {
-        kind();
-        expect(Scanner::ID);
-        expect(Scanner::LPAR);
-        kind();
-        expect(Scanner::RPAR);
-    }
+
+    kind();
+    expect(Scanner::ID);
+    expect(Scanner::LPAR);
+    kind();
+    expect(Scanner::RPAR);
 
     expect(Scanner::SEMICOLON);
 }
 
-void functiondef(bool skip)
+void functiondef()
 {
     std::cout << "In functiondef" << std::endl;
     std::cin.ignore();
-    if(!skip)
-    {
-        kind();
-        expect(Scanner::ID);
-        expect(Scanner::LPAR);
-        kind();
-        expect(Scanner::ID);
-    }
 
+    kind();
+    expect(Scanner::ID);
+    expect(Scanner::LPAR);
+    kind();
+    expect(Scanner::ID);
     expect(Scanner::RPAR);
     body();
 
@@ -181,7 +196,7 @@ void body()
 
     while(kind())
     {
-        varlist(false);
+        varlist();
         expect(Scanner::SEMICOLON);
     }
 
@@ -220,7 +235,7 @@ void stmt()
     }
     else if(accept(Scanner::KW_READ))
     {
-        varlist(false);
+        varlist();
         expect(Scanner::SEMICOLON);
     }
     else if(accept(Scanner::KW_WRITE))

@@ -2,7 +2,6 @@
 
 #include <cstdio>
 #include <iostream>
-#include <stack>
 
 #include "common.h"
 
@@ -51,6 +50,15 @@ Token getToken()
 void putToken(Token token)
 {
     token_stack.push(token);
+}
+
+void rewind(std::stack<Token>& rewind_by)
+{
+    while(!rewind_by.empty())
+    {
+        token_stack.push(rewind_by.top());
+        rewind_by.pop();
+    }
 }
 
 }

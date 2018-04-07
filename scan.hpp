@@ -2,6 +2,8 @@
 #define SCAN_HPP
 
 #include <string>
+#include <stack>
+
 
 namespace Scanner
 {
@@ -25,6 +27,7 @@ void nextToken();
 //returning a zero means end of file
 Token getToken();
 void putToken(Token token);
+void rewind(std::stack<Token>& rewind_by);
 
 /* Tokens */
 const int KW_INT = 1;
