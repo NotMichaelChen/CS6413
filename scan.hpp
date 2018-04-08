@@ -26,11 +26,14 @@ void nextToken();
 //Call only after nextToken
 //returning a zero means end of file
 Token getToken();
+void putToken(Token token);
+
+void enableBuffering();
+void discardBuffer();
+void rewind();
+
 std::string getTokenStr();
 std::string decode(int code);
-
-void putToken(Token token);
-void rewind(std::stack<Token>& rewind_by);
 
 /* Tokens */
 const int KW_INT = 1;

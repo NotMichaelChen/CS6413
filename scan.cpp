@@ -2,12 +2,17 @@
 
 #include <cstdio>
 #include <iostream>
+#include <vector>
 
 #include "common.h"
 
 YYSTYPE yylval;
 int next_token;
+
 std::stack<Scanner::Token> token_stack;
+
+bool buffer = false;
+std::vector<Scanner::Token> rewind_buffer;
 
 extern FILE* yyin;
 
@@ -26,7 +31,13 @@ void loadFile(std::string filename)
 void nextToken()
 {
     if(!token_stack.empty())
+    {
+        if(buffer)
+        {
+            rewind_buffer.push_back(token_stack.top());
+        }
         token_stack.pop();
+    }
     
     if(token_stack.empty())
     {
@@ -45,6 +56,32 @@ Token getToken()
     if(token_stack.empty())
         std::cerr << "Error: attempt to access token without calling nextToken" << std::endl;
     return token_stack.top();
+}
+
+void putToken(Token token)
+{
+    token_stack.push(token);
+}
+
+void enableBuffering()
+{
+    buffer = true;
+}
+
+void discardBuffer()
+{
+    rewind_buffer.clear();
+    buffer = false;
+}
+
+void rewind()
+{
+    while(!rewind_buffer.empty())
+    {
+        token_stack.push(rewind_buffer.back());
+        rewind_buffer.pop_back();
+    }
+    buffer = false;
 }
 
 std::string getTokenStr()
@@ -123,18 +160,6 @@ std::string decode(int code)
     }
 }
 
-void putToken(Token token)
-{
-    token_stack.push(token);
-}
 
-void rewind(std::stack<Token>& rewind_by)
-{
-    while(!rewind_by.empty())
-    {
-        token_stack.push(rewind_by.top());
-        rewind_by.pop();
-    }
-}
 
 }

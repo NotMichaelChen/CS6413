@@ -8,6 +8,7 @@
 #include "symbol.hpp"
 #include "first.hpp"
 
+//One function for each non-terminal
 void program();
 void decl(bool global);
 bool kind();
@@ -71,39 +72,26 @@ bool expect(int token)
 //To disambiguate function-def, decl, function-decl, must look ahead
 void program()
 {
-    //Create a stack so we can "rewind" read tokens
-    std::stack<Scanner::Token> rewind_stack;
+    Scanner::enableBuffering();
+
     //First disambiguation after reading "kind" and "ID"
-
-    rewind_stack.push(Scanner::getToken());
-    //Didn't read a 'kind', didn't get new token, don't save this token
-    if(!kind())
-        rewind_stack.pop();
-
-    rewind_stack.push(Scanner::getToken());
-    if(!expect(Scanner::ID))
-        rewind_stack.pop();
-
-    rewind_stack.push(Scanner::getToken());
+    kind();
+    expect(Scanner::ID);
     //Either function-decl or function-def
     if(accept(Scanner::LPAR))
     {
-        //Must read another "kind"
-        rewind_stack.push(Scanner::getToken());
-        if(!kind())
-            rewind_stack.pop();
+        kind();
 
         //Must be function-decl
-        rewind_stack.push(Scanner::getToken());
         if(accept(Scanner::RPAR))
         {
-            Scanner::rewind(rewind_stack);
+            Scanner::rewind();
             functiondecl();
         }
         //Must be function-def
         else if(accept(Scanner::ID))
         {
-            Scanner::rewind(rewind_stack);
+            Scanner::rewind();
             functiondef();
         }
         else
@@ -116,8 +104,7 @@ void program()
     //Must be decl
     else
     {
-        rewind_stack.pop();
-        Scanner::rewind(rewind_stack);
+        Scanner::rewind();
         decl(true);
     }
 }
