@@ -49,7 +49,12 @@ Token getToken()
 
 std::string getTokenStr()
 {
-    switch(token_stack.top().code)
+    return decode(token_stack.top().code);
+}
+
+std::string decode(int code)
+{
+    switch(code)
     {
         case 0:
             return "EOF";

@@ -27,6 +27,8 @@ void nextToken();
 //returning a zero means end of file
 Token getToken();
 std::string getTokenStr();
+std::string decode(int code);
+
 void putToken(Token token);
 void rewind(std::stack<Token>& rewind_by);
 
