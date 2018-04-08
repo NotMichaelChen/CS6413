@@ -44,6 +44,6 @@ private:
     //Associates a name/identifier with a symbol
     std::unordered_map<std::string, LocalSymbol> localtable;
     std::unordered_map<std::string, GlobalSymbol> globaltable;
-};;
+};
 
 #endif
