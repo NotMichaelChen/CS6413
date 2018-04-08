@@ -71,8 +71,6 @@ bool expect(int token)
 //To disambiguate function-def, decl, function-decl, must look ahead
 void program()
 {
-    std::cout << "In program" << std::endl;
-    std::cin.ignore();
     //Create a stack so we can "rewind" read tokens
     std::stack<Scanner::Token> rewind_stack;
     //First disambiguation after reading "kind" and "ID"
@@ -127,9 +125,6 @@ void program()
 //Skips kind if called from program
 void decl(bool global)
 {
-    std::cout << "In decl" << std::endl;
-    std::cin.ignore();
-
     Scanner::Token type = Scanner::getToken();
     kind();
     varlist(true, global, type.code == Scanner::KW_INT);
@@ -139,8 +134,6 @@ void decl(bool global)
 
 bool kind()
 {
-    std::cout << "In kind" << std::endl;
-    std::cin.ignore();
     if(accept(Scanner::KW_INT))
         return true;
     else if(accept(Scanner::KW_FLOAT))
@@ -156,9 +149,6 @@ bool kind()
 
 void varlist(bool dec, bool global, bool isint)
 {
-    std::cout << "In varlist" << std::endl;
-    std::cin.ignore();
-
     if(dec)
     {
         std::vector<Scanner::Token> vars;
@@ -177,12 +167,14 @@ void varlist(bool dec, bool global, bool isint)
         {
             if(global)
             {
-                table.insertGlobal(vars[i].ptr, false, false, false, isint, vars[i].line_number);
+                if(!table.insertGlobal(vars[i].ptr, false, false, false, isint, vars[i].line_number))
+                    exit(1);
                 std::cout << "Global " << typestr << " variable " << vars[i].ptr << " declared in line " << vars[i].line_number << std::endl;
             }
             else
             {
-                table.insertLocal(vars[i].ptr, isint, vars[i].line_number);
+                if(!table.insertLocal(vars[i].ptr, isint, vars[i].line_number))
+                    exit(1);
                 std::cout << "Local " << typestr << " variable " << vars[i].ptr << " declared in line " << vars[i].line_number << std::endl;
             }
         }
@@ -200,9 +192,6 @@ void varlist(bool dec, bool global, bool isint)
 
 void functiondecl()
 {
-    std::cout << "In functiondecl" << std::endl;
-    std::cin.ignore();
-
     Scanner::Token type = Scanner::getToken();
     kind();
     Scanner::Token name = Scanner::getToken();
@@ -225,9 +214,6 @@ void functiondecl()
 
 void functiondef()
 {
-    std::cout << "In functiondef" << std::endl;
-    std::cin.ignore();
-
     Scanner::Token type = Scanner::getToken();
     kind();
     Scanner::Token name = Scanner::getToken();
@@ -258,8 +244,6 @@ void functiondef()
 //Assume that all variable declarations comes before all statements
 void body()
 {
-    std::cout << "In body" << std::endl;
-    std::cin.ignore();
     expect(Scanner::LBRACE);
 
     while(Scanner::getToken().code == Scanner::KW_INT || Scanner::getToken().code == Scanner::KW_FLOAT)
@@ -280,8 +264,6 @@ void body()
 //Assume that control statements can only execute one other statement
 void stmt()
 {
-    std::cout << "In stmt" << std::endl;
-    std::cin.ignore();
     if(accept(Scanner::KW_IF))
     {
         expect(Scanner::LPAR);
@@ -327,8 +309,6 @@ void stmt()
 
 void writeexprlist()
 {
-    std::cout << "In writeexprlist" << std::endl;
-    std::cin.ignore();
     if(accept(Scanner::STRING_LIT))
         ;
     else if(first_expr(Scanner::getToken().code))
@@ -346,8 +326,6 @@ void writeexprlist()
 
 void factor()
 {
-    std::cout << "In factor" << std::endl;
-    std::cin.ignore();
     Scanner::Token lookahead = Scanner::getToken();
     if(accept(Scanner::INT_LIT))
         ;
@@ -406,8 +384,6 @@ void factor()
 
 void boolexpr()
 {
-    std::cout << "In boolexpr" << std::endl;
-    std::cin.ignore();
     expr();
     boolop();
     expr();
@@ -415,9 +391,6 @@ void boolexpr()
 
 void functioncall()
 {
-    std::cout << "In functioncall" << std::endl;
-    std::cin.ignore();
-
     Scanner::Token name = Scanner::getToken();
     expect(Scanner::ID);
     GlobalSymbol func = table.getGlobal(name.ptr);
@@ -441,9 +414,6 @@ void functioncall()
 
 void term()
 {
-    std::cout << "In term" << std::endl;
-    std::cin.ignore();
-
     //Simply attempt to accept a minus, if you can't then just skip
     accept(Scanner::OP_MINUS);
     factor();
@@ -457,8 +427,6 @@ void term()
 
 void mulop()
 {
-    std::cout << "In mulop" << std::endl;
-    std::cin.ignore();
     if(accept(Scanner::OP_MULT))
         ;
     else if(accept(Scanner::OP_DIV))
@@ -473,9 +441,6 @@ void mulop()
 
 void expr1()
 {
-    std::cout << "In expr1" << std::endl;
-    std::cin.ignore();
-
     term();
     while(first_addop(Scanner::getToken().code))
     {
@@ -486,8 +451,6 @@ void expr1()
 
 void addop()
 {
-    std::cout << "In addop" << std::endl;
-    std::cin.ignore();
     if(accept(Scanner::OP_PLUS))
         ;
     else if(accept(Scanner::OP_MINUS))
@@ -502,8 +465,6 @@ void addop()
 
 void boolop()
 {
-    std::cout << "In boolop" << std::endl;
-    std::cin.ignore();
     if(accept(Scanner::OP_LT))
         ;
     else if(accept(Scanner::OP_GT))
@@ -524,8 +485,6 @@ void boolop()
 
 void expr()
 {
-    std::cout << "In expr" << std::endl;
-    std::cin.ignore();
     Scanner::Token lookahead = Scanner::getToken();
     //Could still be either case
     if(accept(Scanner::ID))
