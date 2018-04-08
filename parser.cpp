@@ -109,7 +109,6 @@ void program()
     }
 }
 
-//Skips kind if called from program
 void decl(bool global)
 {
     Scanner::Token type = Scanner::getToken();
@@ -169,11 +168,77 @@ void varlist(bool dec, bool global, bool isint)
     }
     else
     {
+        Scanner::Token idtok = Scanner::getToken();
         expect(Scanner::ID);
+        LocalSymbol localvar = table.getLocal(idtok.ptr);
+        if(localvar.line_number >= 0)
+        {
+            std::cout << "Local variable " << idtok.ptr << " declared in line " << localvar.line_number
+                << " used in line " << idtok.line_number << std::endl;
+        }
+        else
+        {
+            GlobalSymbol globalvar = table.getGlobal(idtok.ptr);
+
+            if(globalvar.line_number >= 0)
+            {
+                if(!globalvar.is_function)
+                {
+                    std::cout << "Global variable " << idtok.ptr << " declared in line " << globalvar.line_number
+                        << " used in line " << idtok.line_number << std::endl;
+                }
+                else
+                {
+                    std::string isdec = globalvar.is_decl ? "declared " : "defined ";
+                    std::cerr << "Error: using function " << idtok.ptr << " on line " << idtok.line_number
+                        << " as a variable (" << isdec << "in line " << globalvar.line_number << ')' << std::endl;
+                    exit(1);
+                }
+            }
+            else
+            {
+                std::cerr << "Error: identifier " << idtok.ptr << " on line " << idtok.line_number
+                    << " not declared" << std::endl;
+                exit(1);
+            }
+        }
 
         while(accept(Scanner::COMMA))
         {
+            idtok = Scanner::getToken();
             expect(Scanner::ID);
+            LocalSymbol localvar = table.getLocal(idtok.ptr);
+            if(localvar.line_number >= 0)
+            {
+                std::cout << "Local variable " << idtok.ptr << " declared in line " << localvar.line_number
+                    << " used in line " << idtok.line_number << std::endl;
+            }
+            else
+            {
+                GlobalSymbol globalvar = table.getGlobal(idtok.ptr);
+
+                if(globalvar.line_number >= 0)
+                {
+                    if(!globalvar.is_function)
+                    {
+                        std::cout << "Global variable " << idtok.ptr << " declared in line " << globalvar.line_number
+                            << " used in line " << idtok.line_number << std::endl;
+                    }
+                    else
+                    {
+                        std::string isdec = globalvar.is_decl ? "declared " : "defined ";
+                        std::cerr << "Error: using function " << idtok.ptr << " on line " << idtok.line_number
+                            << " as a variable (" << isdec << "in line " << globalvar.line_number << ')' << std::endl;
+                        exit(1);
+                    }
+                }
+                else
+                {
+                    std::cerr << "Error: identifier " << idtok.ptr << " on line " << idtok.line_number
+                        << " not declared" << std::endl;
+                    exit(1);
+                }
+            }
         }
     }
 }
