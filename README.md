@@ -24,6 +24,8 @@ Contains all of the functions used to recursively parse the given filename. Each
 
 `varlist` takes in three bools: whether the varlist is a declaration or not, whether it is global, and what type the declaration is. This is needed since `varlist` can be called in both a variable-declaring context or another context. If variables are being declared, then they need to be put onto the symbol table, so the function needs to know whether it's creating variables or not.
 
+Due to a lack of time, the parser currently exits upon encountering an error in parsing.
+
 ### Scan
 
 Wraps the provided scanner with a cleaner interface, and abstracts the work done to advance the scanner and read the data.
