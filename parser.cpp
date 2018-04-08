@@ -11,7 +11,7 @@
 //One function for each non-terminal
 void program();
 void decl(bool global);
-bool kind();
+void kind();
 void varlist(bool dec, bool global, bool isint);
 void functiondecl();
 void functiondef();
@@ -119,18 +119,17 @@ void decl(bool global)
     expect(Scanner::SEMICOLON);
 }
 
-bool kind()
+void kind()
 {
     if(accept(Scanner::KW_INT))
-        return true;
+        ;
     else if(accept(Scanner::KW_FLOAT))
-        return true;
+        ;
     else
     {
         std::cerr << "Error: syntax error in 'kind', with token " << Scanner::getTokenStr() << " on line "
                 << Scanner::getToken().line_number << std::endl;
         exit(1);
-        return false;
     }
 }
 
