@@ -1,3 +1,7 @@
+//Michael Chen - mzc223 - CS6413 - Spring 2018 - Boris Aronov
+
+//Contains main function that passes the given filename to the parser
+
 #include <iostream>
 
 #include "parser.hpp"

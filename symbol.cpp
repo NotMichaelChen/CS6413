@@ -1,3 +1,5 @@
+//Michael Chen - mzc223 - CS6413 - Spring 2018 - Boris Aronov
+
 #include "symbol.hpp"
 
 #include <iostream>

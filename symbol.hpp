@@ -1,11 +1,9 @@
+//Michael Chen - mzc223 - CS6413 - Spring 2018 - Boris Aronov
+
 #ifndef SYMBOL_HPP
 #define SYMBOL_HPP
 
 #include <unordered_map>
-
-//issue: decl symbols vs def symbols (just overwrite symbol)
-//issue: multiple local symbols with same name, different scopes (nonissue: local symbols are cleared at end of definition)
-//question: are functions and variables allowed to have the same name? (assume for now that they don't)
 
 //No functions may be local
 struct LocalSymbol

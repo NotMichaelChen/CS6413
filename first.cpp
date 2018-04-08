@@ -1,3 +1,5 @@
+//Michael Chen - mzc223 - CS6413 - Spring 2018 - Boris Aronov
+
 #include "first.hpp"
 
 #include "scan.hpp"

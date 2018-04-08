@@ -1,9 +1,10 @@
+//Michael Chen - mzc223 - CS6413 - Spring 2018 - Boris Aronov
+
 #ifndef SCAN_HPP
 #define SCAN_HPP
 
 #include <string>
 #include <stack>
-
 
 namespace Scanner
 {
