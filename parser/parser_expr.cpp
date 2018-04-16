@@ -9,6 +9,8 @@
 #include "parser_internal.hpp"
 #include "parser_ops.hpp"
 
+//All return types assume int=true, float=false
+
 void expr()
 {
     Scanner::Token lookahead = Scanner::getToken();
@@ -73,7 +75,10 @@ void factor()
     else if(accept(Scanner::FLOAT_LIT))
         ;
     else if(accept(Scanner::LPAR))
-        ;
+    {
+        expr();
+        expect(Scanner::RPAR);
+    }
     //Disambiguate between ID and function-call
     else if(accept(Scanner::ID))
     {
