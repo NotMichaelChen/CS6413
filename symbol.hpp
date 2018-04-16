@@ -38,6 +38,9 @@ public:
     LocalSymbol getLocal(std::string id);
     GlobalSymbol getGlobal(std::string id);
 
+    //Halts if not a variable or does not exist
+    bool isVarInt(std::string id);
+
 private:
     //Associates a name/identifier with a symbol
     std::unordered_map<std::string, LocalSymbol> localtable;
