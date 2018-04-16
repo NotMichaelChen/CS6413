@@ -9,6 +9,7 @@
 namespace Scanner
 {
 
+//TODO: Free ptr when done
 struct Token {
     int code;
     int line_number;
