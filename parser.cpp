@@ -309,7 +309,18 @@ void writeexprlist()
     }
 
     while(accept(Scanner::COMMA))
-        expr();
+    {
+        if(accept(Scanner::STRING_LIT))
+            ;
+        else if(first_expr(Scanner::getToken().code))
+            expr();
+        else
+        {
+            std::cerr << "Error: syntax error in 'writeexprlist', with token " << Scanner::getTokenStr() << " on line "
+                    << Scanner::getToken().line_number << std::endl;
+            exit(1);
+        }
+    }
 }
 
 void factor()
