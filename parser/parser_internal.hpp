@@ -4,6 +4,9 @@
 #include <iostream>
 
 #include "scan.hpp"
+#include "symbol.hpp"
+
+extern SymbolTable table;
 
 bool accept(int token);
 bool expect(int token);
