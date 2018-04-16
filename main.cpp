@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "parser.hpp"
+#include "parser/parser.hpp"
 
 int main(int argc, char** argv)
 {
