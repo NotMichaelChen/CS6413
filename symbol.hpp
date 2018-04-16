@@ -38,8 +38,9 @@ public:
     LocalSymbol getLocal(std::string id);
     GlobalSymbol getGlobal(std::string id);
 
-    //Halts if not a variable or does not exist
+    //Halts if not a variable/function or does not exist
     bool isVarInt(std::string id);
+    bool isFuncInt(std::string id);
 
 private:
     //Associates a name/identifier with a symbol

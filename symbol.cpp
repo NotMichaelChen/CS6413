@@ -95,3 +95,23 @@ bool SymbolTable::isVarInt(std::string id)
         }
     }
 }
+
+bool SymbolTable::isFuncInt(std::string id)
+{
+    auto globaliter = globaltable.find(id);
+    if(globaliter != globaltable.end())
+    {
+        if(globaliter->second.is_function)
+            return globaliter->second.is_int;
+        else
+        {
+            std::cerr << "Error, trying to use variable " << id << " as function" << std::endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        std::cerr << "Error, trying to get type of undefined identifier '" << id << "'" << std::endl;
+        exit(1);
+    }
+}

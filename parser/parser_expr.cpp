@@ -130,6 +130,7 @@ bool factor()
     }
 }
 
+//TODO: fix
 bool functioncall()
 {
     Scanner::Token name = Scanner::getToken();
@@ -137,8 +138,17 @@ bool functioncall()
     printFuncUse(name, table);
 
     expect(Scanner::LPAR);
+
     bool type = expr();
+    //Check param type
+    //At this point, assume function is valid (since it passed through printFuncUse just fine)
+    if(type != table.getGlobal(name.ptr).param_is_int)
+    {
+        std::cerr << "Error: type mismatch on line " << name.line_number << std::endl;
+        exit(1);
+    }
+
     expect(Scanner::RPAR);
 
-    return type;
+    return table.isFuncInt(name.ptr);
 }
