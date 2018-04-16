@@ -277,6 +277,14 @@ void stmt()
         expr();
         expect(Scanner::SEMICOLON);
     }
+    else if(accept(Scanner::LBRACE))
+    {
+        stmt();
+        while(!accept(Scanner::RBRACE))
+        {
+            stmt();
+        }
+    }
     //Assume it's an expression case
     else
     {

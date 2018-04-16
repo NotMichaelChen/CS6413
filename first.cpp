@@ -11,6 +11,7 @@ bool first_stmt(int symbol)
         symbol == Scanner::KW_READ ||
         symbol == Scanner::KW_WRITE ||
         symbol == Scanner::KW_RETURN ||
+        symbol == Scanner::LBRACE ||
         first_expr(symbol);
 }
 
