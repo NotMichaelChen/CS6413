@@ -6,10 +6,15 @@
 #include <string>
 #include <stack>
 
+/**
+ * Wraps the provided scanner with a nicer interface, and implements token rewinding for look-aheads in the parser
+ */
+
 namespace Scanner
 {
 
-//TODO: Free ptr when done
+//Represents a scanned token
+//TODO: Free ptr when done?
 struct Token {
     int code;
     int line_number;
@@ -21,20 +26,37 @@ struct Token {
     };
 };
 
+//Loads the given file
 //Call only once
 void loadFile(std::string filename);
 
+//Advances the scanner by one token
+//Unless buffering is enabled, tokens are discarded
 void nextToken();
+
+//Gets the current token
 //Call only after nextToken
 //returning a zero means end of file
 Token getToken();
+
+//Puts a token back into the scanner stream
+//This is similar to ungetc()
 void putToken(Token token);
 
+//Enables buffering of scanner tokens
+//nextToken will not discard tokens, and will instead remember old tokens
 void enableBuffering();
+
+//Discards the scanner tokens if a rewind is not necessary
 void discardBuffer();
+
+//Rewinds the stream by putting back all of the old tokens that were collected while buffering was enables
 void rewind();
 
+//Gets the current token as a string
 std::string getTokenStr();
+
+//Given a token code, return a string representing it. Useful for printing
 std::string decode(int code);
 
 /* Tokens */

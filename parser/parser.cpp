@@ -15,6 +15,10 @@
 #include "parser_ops.hpp"
 #include "parser_expr.hpp"
 
+/*
+ * Recursive descent parser implementation. Each non-terminal is represented by one function
+ */
+
 //One function for each non-terminal
 void program();
 void decl(bool global);

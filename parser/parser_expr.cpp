@@ -1,3 +1,5 @@
+//Michael Chen - mzc223 - CS6413 - Spring 2018 - Boris Aronov
+
 #include "parser_expr.hpp"
 
 #include <iostream>
@@ -8,6 +10,11 @@
 
 #include "parser_internal.hpp"
 #include "parser_ops.hpp"
+
+/*
+ * Parses non-terminals related to expressions
+ * All functions return whether their parsed expression is an int or a float. This is needed to verify type correctness
+ */
 
 //All return types assume int=true, float=false
 

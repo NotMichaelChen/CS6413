@@ -5,6 +5,10 @@
 
 #include <unordered_map>
 
+/*
+ * Defines the symbol table used during parsing to verify variable usage
+ */
+
 //No functions may be local
 struct LocalSymbol
 {
@@ -29,12 +33,14 @@ struct GlobalSymbol
 class SymbolTable
 {
 public:
+    //Methods to insert symbols into the table
     bool insertLocal(std::string id, bool isi, int line);
     bool insertGlobal(std::string id, bool isf, bool isdec, bool pii, bool isi, int line);
 
+    //Clear locals at end of function
     void clearLocal();
 
-    //Invalid id's will return a symbol with a negative line number
+    //Get symbols. Invalid id's will return a symbol with a negative line number
     LocalSymbol getLocal(std::string id);
     GlobalSymbol getGlobal(std::string id);
 

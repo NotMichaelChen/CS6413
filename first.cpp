@@ -4,6 +4,10 @@
 
 #include "scan.hpp"
 
+/*
+ * Contains functions that return whether the given symbol is part of the FIRST set of a non-terminal
+ */
+
 bool first_stmt(int symbol)
 {
     return symbol == Scanner::KW_IF ||

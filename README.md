@@ -1,6 +1,6 @@
 Michael Chen (mzc223) - Spring 2018
 
-# CS6413 Project Part 2: Parser and Symbol Table Management
+# CS6413 Project Part 3: Semantic Checking
 
 ## Build Instructions
 
@@ -16,15 +16,31 @@ For reference, development was done with `g++:7.2.0` and `flex:2.6.1` on an Ubun
 
 Contains the main function that handles the command line arguments and redirects cout and cerr if specified. It then calls the parser function with the given filename.
 
-### Parser
+### Parser Module
 
-Contains all of the functions used to recursively parse the given filename. Each non-terminal is represented by a function, and all functions are void. Nearly all functions take no parameters, with the two exceptions being `decl` and `varlist`.
+Contains all of the functions used to recursively parse the given filename. Each non-terminal is represented by a function. The parser module is split into several different files to modularize code.
+
+#### parser_internal
+
+Contains functions and definitions common to all of the parser files. Currently contains the accept/expect functions and the symbol table declaration (which is declared in parser.cpp)
+
+#### parser_expr
+
+Contains functions that parse expressions. All functions return a bool that indicate whether the result is an int or bool. This is used to do type checking inside of the expression.
+
+#### parser_ops
+
+Contains functions that parse operation symbols. Separated to clear clutter from the parser file.
+
+#### parser
+
+Contains all the other non-terminal functions of the recursize descent parsers.
+
+Only two functions take parameters: `decl` and `varlist`.
 
 `decl` takes in a bool that states whether the declaration is a global or not. This is needed to ensure that the variable declarations are placed in the correct symbol table.
 
 `varlist` takes in three bools: whether the varlist is a declaration or not, whether it is global, and what type the declaration is. This is needed since `varlist` can be called in both a variable-declaring context or another context. If variables are being declared, then they need to be put onto the symbol table, so the function needs to know whether it's creating variables or not.
-
-Due to a lack of time, the parser currently exits upon encountering an error in parsing.
 
 ### Scan
 

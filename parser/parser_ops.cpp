@@ -1,9 +1,15 @@
+//Michael Chen - mzc223 - CS6413 - Spring 2018 - Boris Aronov
+
 #include "parser_ops.hpp"
 
 #include <iostream>
 
 #include "parser_internal.hpp"
 #include "scan.hpp"
+
+/*
+ * Contains non-terminals that match operations
+ */
 
 void mulop()
 {
