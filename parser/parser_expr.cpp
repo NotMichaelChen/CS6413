@@ -34,7 +34,6 @@ bool expr()
             if(table.isVarInt(lookahead.ptr) != result)
             {
                 std::cerr << "Error: type mismatch on line " << lookahead.line_number << std::endl;
-                exit(1);
             }
 
             return result;
@@ -72,7 +71,6 @@ bool expr1()
         if(first_type != compare_type)
         {
             std::cerr << "Error: type mismatch on line " << prev.line_number << std::endl;
-            exit(1);
         }
     }
 
@@ -94,7 +92,6 @@ bool term()
         if(first_type != compare_type)
         {
             std::cerr << "Error: type mismatch on line " << prev.line_number << std::endl;
-            exit(1);
         }
     }
 
@@ -137,7 +134,6 @@ bool factor()
     }
 }
 
-//TODO: fix
 bool functioncall()
 {
     Scanner::Token name = Scanner::getToken();
@@ -152,7 +148,6 @@ bool functioncall()
     if(type != table.getGlobal(name.ptr).param_is_int)
     {
         std::cerr << "Error: type mismatch on line " << name.line_number << std::endl;
-        exit(1);
     }
 
     expect(Scanner::RPAR);
