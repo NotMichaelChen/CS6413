@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stack>
 #include <vector>
+#include <fstream>
 
 #include "scan.hpp"
 #include "symbol.hpp"
@@ -33,6 +34,16 @@ void writeexprlist();
 void boolexpr();
 
 SymbolTable table;
+std::vector<std::string> output;
+
+void writefile()
+{
+    std::ofstream ofile("outputcode", std::ios_base::app);
+    for(size_t i = 0; i < output.size(); i++)
+    {
+        ofile << output[i] << '\n';
+    }
+}
 
 void parse(std::string filename)
 {
@@ -43,6 +54,8 @@ void parse(std::string filename)
     Scanner::nextToken();
     while(Scanner::getToken().code)
         program();
+
+    writefile();
 }
 
 // All functions assume the "token pointer" is pointed at the first token they're supposed to read, so don't advance
@@ -127,17 +140,31 @@ void varlist(bool dec, bool global, bool isint)
 
         printVarDeclare(vars, table, isint, global);
     }
+    //'read' case
     else
     {
+        //TODO: Don't read variable names, use memory locations
+        std::string command = "READ";
+
+        //Read the first ID
         Scanner::Token idtok = Scanner::getToken();
         expect(Scanner::ID);
-        printVarUse(idtok, table);
+        bool isint = printVarUse(idtok, table);
+
+        command += isint ? " " : "F ";
+        std::string line = command + idtok.ptr;
+        output.push_back(line);
         
         while(accept(Scanner::COMMA))
         {
+            line.clear();
+
             idtok = Scanner::getToken();
             expect(Scanner::ID);
             printVarUse(idtok, table);
+
+            line = command + idtok.ptr;
+            output.push_back(line);
         }
     }
 }
@@ -216,7 +243,6 @@ void body()
     expect(Scanner::RBRACE);
 }
 
-//Assume that control statements can only execute one other statement
 void stmt()
 {
     if(accept(Scanner::KW_IF))

@@ -4,13 +4,16 @@
 
 #include <iostream>
 
-void printVarUse(Scanner::Token tok, SymbolTable& table)
+bool printVarUse(Scanner::Token tok, SymbolTable& table)
 {
+    bool isint;
+
     LocalSymbol localvar = table.getLocal(tok.ptr);
     if(localvar.line_number >= 0)
     {
         std::cout << "Local variable " << tok.ptr << " declared in line " << localvar.line_number
             << " used in line " << tok.line_number << std::endl;
+        isint = localvar.is_int;
     }
     else
     {
@@ -22,6 +25,7 @@ void printVarUse(Scanner::Token tok, SymbolTable& table)
             {
                 std::cout << "Global variable " << tok.ptr << " declared in line " << globalvar.line_number
                     << " used in line " << tok.line_number << std::endl;
+                isint = globalvar.is_int;
             }
             else
             {
@@ -38,6 +42,8 @@ void printVarUse(Scanner::Token tok, SymbolTable& table)
             exit(1);
         }
     }
+
+    return isint;
 }
 
 void printVarDeclare(std::vector<Scanner::Token>& toks, SymbolTable& table, bool isint, bool isglobal)
