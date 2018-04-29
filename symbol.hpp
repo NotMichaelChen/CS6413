@@ -9,12 +9,23 @@
  * Defines the symbol table used during parsing to verify variable usage
  */
 
+/* (move to readme later)
+ * Memory Allocation Policy
+ * Global Variables, then Local variables
+ * Local Variables are stored as an offset from the max global variable address
+ * A temporary number offset is stored in the program text for locals which is then overwritten with the later computed correct
+ *  address
+ * 
+ */
+
 //No functions may be local
 struct LocalSymbol
 {
     //Only two types, either int or float
     bool is_int;
     int line_number;
+
+    int memloc;
 };
 
 struct GlobalSymbol
@@ -28,11 +39,15 @@ struct GlobalSymbol
 
     bool is_int;
     int line_number;
+    //Acts as a label for functions
+    int memloc;
 };
 
 class SymbolTable
 {
 public:
+    SymbolTable();
+
     //Methods to insert symbols into the table
     bool insertLocal(std::string id, bool isi, int line);
     bool insertGlobal(std::string id, bool isf, bool isdec, bool pii, bool isi, int line);
@@ -52,6 +67,10 @@ private:
     //Associates a name/identifier with a symbol
     std::unordered_map<std::string, LocalSymbol> localtable;
     std::unordered_map<std::string, GlobalSymbol> globaltable;
+
+    int globalcounter;
+    int localcounter;
+    int labelcounter;
 };
 
 #endif

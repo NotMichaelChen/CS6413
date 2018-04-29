@@ -4,12 +4,17 @@
 
 #include <iostream>
 
+SymbolTable::SymbolTable() : globalcounter(1), localcounter(1), labelcounter(1)
+{}
+
 bool SymbolTable::insertLocal(std::string id, bool isi, int line)
 {
     auto iter = localtable.find(id);
     if(iter == localtable.end())
     {
-        localtable[id] = {isi, line};
+        localtable[id] = {isi, line, localcounter};
+        localcounter++;
+
         return true;
     }
     else
@@ -25,7 +30,22 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
     auto iter = globaltable.find(id);
     if(iter == globaltable.end())
     {
-        globaltable[id] = {isf, isdec, pii, isi, line};
+        int addr = -1;
+        //func def
+        if(isf && !isdec)
+        {
+            addr = labelcounter;
+            labelcounter++;
+        }
+        //variable decl
+        else if(!isf)
+        {
+            addr = globalcounter;
+            globalcounter++;
+        }
+        //Ignore if func dec
+
+        globaltable[id] = {isf, isdec, pii, isi, line, addr};
         return true;
     }
     //Check if we have a decl and are receiving a def, and check that def and decl are the same
@@ -35,6 +55,8 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
         //Only change relevant variables
         iter->second.is_decl = false;
         iter->second.line_number = line;
+        iter->second.memloc = labelcounter;
+        labelcounter++;
         return true;
     }
     else
@@ -48,6 +70,7 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
 void SymbolTable::clearLocal()
 {
     localtable.clear();
+    localcounter = 1;
 }
 
 LocalSymbol SymbolTable::getLocal(std::string id)
@@ -56,7 +79,7 @@ LocalSymbol SymbolTable::getLocal(std::string id)
     if(iter != localtable.end())
         return iter->second;
     else
-        return {false, -1};
+        return {false, -1, -1};
 }
 
 GlobalSymbol SymbolTable::getGlobal(std::string id)
@@ -65,7 +88,7 @@ GlobalSymbol SymbolTable::getGlobal(std::string id)
     if(iter != globaltable.end())
         return iter->second;
     else
-        return {false, false, false, false, -1};
+        return {false, false, false, false, -1, -1};
 }
 
 bool SymbolTable::isVarInt(std::string id)
