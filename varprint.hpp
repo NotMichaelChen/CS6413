@@ -12,8 +12,8 @@
  * Contains functions that print out a formatted message when a variable or function is declared/defined and called/used
  */
 
-//Returns whether the var is an int or not
-bool printVarUse(Scanner::Token tok, SymbolTable& table);
+//LocalSymbol contains enough info to hold any kind of variable
+LocalSymbol printVarUse(Scanner::Token tok, SymbolTable& table);
 void printVarDeclare(std::vector<Scanner::Token>& toks, SymbolTable& table, bool isint, bool isglobal);
 void printFuncUse(Scanner::Token tok, SymbolTable& table);
 

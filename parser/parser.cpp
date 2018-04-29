@@ -38,7 +38,7 @@ std::vector<std::string> output;
 
 void writefile()
 {
-    std::ofstream ofile("outputcode", std::ios_base::app);
+    std::ofstream ofile("outputcode");
     for(size_t i = 0; i < output.size(); i++)
     {
         ofile << output[i] << '\n';
@@ -149,10 +149,11 @@ void varlist(bool dec, bool global, bool isint)
         //Read the first ID
         Scanner::Token idtok = Scanner::getToken();
         expect(Scanner::ID);
-        bool isint = printVarUse(idtok, table);
+        LocalSymbol var = printVarUse(idtok, table);
 
-        command += isint ? " " : "F ";
-        std::string line = command + idtok.ptr;
+        command += var.is_int ? " " : "F ";
+
+        std::string line = command + std::to_string(var.memloc);
         output.push_back(line);
         
         while(accept(Scanner::COMMA))
@@ -161,9 +162,9 @@ void varlist(bool dec, bool global, bool isint)
 
             idtok = Scanner::getToken();
             expect(Scanner::ID);
-            printVarUse(idtok, table);
+            var = printVarUse(idtok, table);
 
-            line = command + idtok.ptr;
+            line = command + std::to_string(var.memloc);
             output.push_back(line);
         }
     }
