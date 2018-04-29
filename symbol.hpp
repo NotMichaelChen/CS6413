@@ -12,6 +12,7 @@
 /* (move to readme later)
  * Memory Allocation Policy
  * global variables start at beginning, local variables start at end (999 for now)
+ * having local variables start at end means param variable is *ALWAYS* at address 999
  * 
  */
 
@@ -55,6 +56,9 @@ public:
     //Get symbols. Invalid id's will return a symbol with a negative line number
     LocalSymbol getLocal(std::string id);
     GlobalSymbol getGlobal(std::string id);
+
+    //Get specific symbols. Will exit if incorrect symbol type
+    GlobalSymbol getFunction(std::string id);
 
     //Halts if not a variable/function or does not exist
     bool isVarInt(std::string id);

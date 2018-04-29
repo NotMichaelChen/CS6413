@@ -36,14 +36,14 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
     if(iter == globaltable.end())
     {
         int addr = -1;
-        //func def
-        if(isf && !isdec)
+        //func
+        if(isf)
         {
             addr = labelcounter;
             labelcounter++;
         }
         //variable decl
-        else if(!isf)
+        else
         {
             addr = globalcounter;
             globalcounter++;
@@ -53,7 +53,6 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
                 exit(1);
             }
         }
-        //Ignore if func dec
 
         globaltable[id] = {isf, isdec, pii, isi, line, addr};
         return true;
@@ -65,8 +64,6 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
         //Only change relevant variables
         iter->second.is_decl = false;
         iter->second.line_number = line;
-        iter->second.memloc = labelcounter;
-        labelcounter++;
         return true;
     }
     else
@@ -99,6 +96,23 @@ GlobalSymbol SymbolTable::getGlobal(std::string id)
         return iter->second;
     else
         return {false, false, false, false, -1, -1};
+}
+
+GlobalSymbol SymbolTable::getFunction(std::string id)
+{
+    GlobalSymbol func = getGlobal(id);
+    if(func.line_number < 0)
+    {
+        std::cerr << "Error: getting function " << id << " when it hasn't been declared" << std::endl;
+        exit(1);
+    }
+    else if(!func.is_function)
+    {
+        std::cerr << "Error: using variable " << id << " as a function (declared in line " << func.line_number << std::endl;
+        exit(1);
+    }
+
+    return func;
 }
 
 bool SymbolTable::isVarInt(std::string id)

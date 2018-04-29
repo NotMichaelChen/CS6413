@@ -143,7 +143,6 @@ void varlist(bool dec, bool global, bool isint)
     //'read' case
     else
     {
-        //TODO: Don't read variable names, use memory locations
         std::string command = "READ";
 
         //Read the first ID
@@ -214,12 +213,21 @@ void functiondef()
     }
     std::cout << "Function " << Scanner::decode(type.code) << ' ' << name.ptr << '(' << Scanner::decode(argtype.code)
         << ") defined in line " << name.line_number << std::endl;
+
     //Clear local table before entering body
     table.clearLocal();
+
+    //Generate label to indicate function
+    GlobalSymbol funcsymbol = table.getFunction(name.ptr);
+    output.push_back("LABEL " + std::to_string(funcsymbol.memloc));
+
     //Insert local param variable
     table.insertLocal(argname.ptr, (argtype.code == Scanner::KW_INT), argname.line_number);
     std::cout << "Local " << Scanner::decode(argtype.code) << " variable " << argname.ptr << " declared in line "
         << argname.line_number << std::endl;
+    
+    //Generate code to retrieve param variable from stack
+    output.push_back("POP 999");
 
     body();
 }
