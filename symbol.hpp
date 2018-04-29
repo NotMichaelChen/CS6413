@@ -11,10 +11,7 @@
 
 /* (move to readme later)
  * Memory Allocation Policy
- * Global Variables, then Local variables
- * Local Variables are stored as an offset from the max global variable address
- * A temporary number offset is stored in the program text for locals which is then overwritten with the later computed correct
- *  address
+ * global variables start at beginning, local variables start at end (999 for now)
  * 
  */
 

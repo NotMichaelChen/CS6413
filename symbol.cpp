@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-SymbolTable::SymbolTable() : globalcounter(1), localcounter(1), labelcounter(1)
+SymbolTable::SymbolTable() : globalcounter(1), localcounter(999), labelcounter(1)
 {}
 
 bool SymbolTable::insertLocal(std::string id, bool isi, int line)
@@ -13,7 +13,12 @@ bool SymbolTable::insertLocal(std::string id, bool isi, int line)
     if(iter == localtable.end())
     {
         localtable[id] = {isi, line, localcounter};
-        localcounter++;
+        localcounter--;
+        if(localcounter <= globalcounter)
+        {
+            std::cerr << "Error: ran out of space when allocating local variables" << std::endl;
+            exit(1);
+        }
 
         return true;
     }
@@ -42,6 +47,11 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
         {
             addr = globalcounter;
             globalcounter++;
+            if(globalcounter >= localcounter)
+            {
+                std::cerr << "Error, ran out of space when allocating global variables" << std::endl;
+                exit(1);
+            }
         }
         //Ignore if func dec
 
@@ -70,7 +80,7 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
 void SymbolTable::clearLocal()
 {
     localtable.clear();
-    localcounter = 1;
+    localcounter = 999;
 }
 
 LocalSymbol SymbolTable::getLocal(std::string id)
