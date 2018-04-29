@@ -6,6 +6,7 @@
 #include <stack>
 #include <vector>
 #include <fstream>
+#include <string.h>
 
 #include "scan.hpp"
 #include "symbol.hpp"
@@ -227,9 +228,15 @@ void functiondef()
         << argname.line_number << std::endl;
     
     //Generate code to retrieve param variable from stack
-    output.push_back("POP 999");
+    //Do not pop for main function
+    if(strcmp("main", name.ptr) != 0)
+        output.push_back("POP 999");
 
     body();
+
+    //main function should have a "stop" at the end
+    if(strcmp("main", name.ptr) == 0)
+        output.push_back("STOP");
 }
 
 //Assume that all variable declarations comes before all statements
