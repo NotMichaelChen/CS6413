@@ -18,6 +18,29 @@
 
 //All return types assume int=true, float=false
 
+//Puts the correct numbers into the command string
+void formatArithArgs(std::string& command, ExprResult& lhs, ExprResult& rhs)
+{
+    //Place first two args
+    if(lhs.resultloc < 0)
+    {
+        if(lhs.isint)
+            command += "#" + lhs.intliteral;
+        else
+            command += "#" + std::to_string(lhs.floatliteral);
+    }
+
+    command += ",";
+
+    if(rhs.resultloc < 0)
+    {
+        if(rhs.isint)
+            command += "#" + rhs.intliteral;
+        else
+            command += "#" + std::to_string(rhs.floatliteral);
+    }
+}
+
 ExprResult expr()
 {
     Scanner::Token lookahead = Scanner::getToken();
@@ -77,17 +100,11 @@ ExprResult expr1()
         }
 
         //format add/sub command
-        std::string command;
-        if(op == Scanner::OP_PLUS)
-            command = "ADD";
-        else if(op == Scanner::OP_MINUS)
-            command = "SUB";
+        std::string command = Scanner::decode(op);
+        command += first_term.isint ? " " : "F ";
 
         //Place first two args
-        command += first_term.isint ? " " : "F ";
-        command += first_term.resultloc;
-        command += ",";
-        command += compare_term.resultloc;
+        formatArithArgs(command, first_term, compare_term);
         
         //get result memory loc and add it to third arg of add/sub
         int resultloc = table.getLocalCounter();
@@ -155,17 +172,11 @@ ExprResult term()
         }
 
         //format mul/div command
-        std::string command;
-        if(op == Scanner::OP_MULT)
-            command = "MUL";
-        else if(op == Scanner::OP_DIV)
-            command = "DIV";
+        std::string command = Scanner::decode(op);
+        command += first_term.isint ? " " : "F ";
 
         //Place first two args
-        command += first_term.isint ? " " : "F ";
-        command += first_term.resultloc;
-        command += ",";
-        command += compare_term.resultloc;
+        formatArithArgs(command, first_term, compare_term);
         
         //get result memory loc and add it to third arg of add/sub
         int resultloc = table.getLocalCounter();
