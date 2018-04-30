@@ -6,8 +6,12 @@
 struct ExprResult
 {
     bool isint;
-    //Represents which memory location the result of the computation is in
+    //Represents which memory location the result of the computation is in. Negative if literal
     int resultloc;
+
+    //Only access the one indicated by isint
+    int intliteral;
+    float floatliteral;
 };
 
 ExprResult expr();

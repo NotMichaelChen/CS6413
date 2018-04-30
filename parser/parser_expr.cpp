@@ -28,7 +28,7 @@ ExprResult expr()
         //Definitely first case
         if(accept(Scanner::OP_ASSIGN))
         {
-            printVarUse(lookahead, table);
+            LocalSymbol assignedvar = printVarUse(lookahead, table);
             //Don't put back the lookahead tokens, otherwise infinite recursion
             ExprResult result = expr();
 
@@ -38,8 +38,7 @@ ExprResult expr()
             }
 
             //Copy the result temporary into the variable
-            LocalSymbol localvar = table.getLocalVar(lookahead.ptr);
-            output.push_back("COPY " + std::to_string(localvar.memloc) + ", " + std::to_string(result.resultloc));
+            output.push_back("COPY " + std::to_string(assignedvar.memloc) + ", " + std::to_string(result.resultloc));
 
             return result;
         }
@@ -187,14 +186,14 @@ ExprResult factor()
 {
     Scanner::Token lookahead = Scanner::getToken();
     if(accept(Scanner::INT_LIT))
-        return true;
+        return {true, -1, lookahead.value, 0};
     else if(accept(Scanner::FLOAT_LIT))
-        return false;
+        return {false, -1, 0, lookahead.valuef};
     else if(accept(Scanner::LPAR))
     {
-        bool type = expr();
+        ExprResult result = expr();
         expect(Scanner::RPAR);
-        return type;
+        return result;
     }
     //Disambiguate between ID and function-call
     else if(accept(Scanner::ID))
@@ -207,8 +206,8 @@ ExprResult factor()
         }
         else
         {
-            printVarUse(lookahead, table);
-            return table.isVarInt(lookahead.ptr);
+            LocalSymbol var = printVarUse(lookahead, table);
+            return {table.isVarInt(lookahead.ptr), var.memloc};
         }
     }
     else
