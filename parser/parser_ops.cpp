@@ -25,12 +25,12 @@ void mulop()
     }
 }
 
-void addop()
+int addop()
 {
     if(accept(Scanner::OP_PLUS))
-        ;
+        return Scanner::OP_PLUS;
     else if(accept(Scanner::OP_MINUS))
-        ;
+        return Scanner::OP_MINUS;
     else
     {
         std::cerr << "Error: syntax error in 'addop', with token " << Scanner::getTokenStr() << " on line "

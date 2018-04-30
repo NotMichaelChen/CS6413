@@ -4,7 +4,7 @@
 #define PARSER_OPS_HPP
 
 void mulop();
-void addop();
+int addop();
 void boolop();
 
 #endif

@@ -229,6 +229,7 @@ void functiondef()
     
     //Generate code to retrieve param variable from stack
     //Do not pop for main function
+    //TODO: Figure out how the parameter to main works
     if(strcmp("main", name.ptr) != 0)
         output.push_back("POP 999");
 
@@ -312,10 +313,16 @@ void stmt()
 
 //Skip expr-list
 
+//TODO: Write expressions too, figure out how to deal with newlines
 void writeexprlist()
 {
+    Scanner::Token lookahead = Scanner::getToken();
     if(accept(Scanner::STRING_LIT))
-        ;
+    {
+        std::string command = "WRITES \"";
+        command += lookahead.ptr;
+        output.push_back(command + "\"");
+    }
     else if(first_expr(Scanner::getToken().code))
         expr();
     else
@@ -328,7 +335,11 @@ void writeexprlist()
     while(accept(Scanner::COMMA))
     {
         if(accept(Scanner::STRING_LIT))
-            ;
+        {
+            std::string command = "WRITES \"";
+            command += lookahead.ptr;
+            output.push_back(command + "\"");
+        }
         else if(first_expr(Scanner::getToken().code))
             expr();
         else

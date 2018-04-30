@@ -115,6 +115,33 @@ GlobalSymbol SymbolTable::getFunction(std::string id)
     return func;
 }
 
+LocalSymbol SymbolTable::getLocalVar(std::string id)
+{
+    LocalSymbol var = getLocal(id);
+    if(var.line_number < 0)
+    {
+        std::cerr << "Error: getting local variable " << id << " when it hasn't been declared" << std::endl;
+        exit(1);
+    }
+
+    return var;
+}
+
+int SymbolTable::getLocalCounter()
+{
+    return localcounter;
+}
+
+void SymbolTable::decrementLocalCounter()
+{
+    localcounter--;
+    if(localcounter <= globalcounter)
+    {
+        std::cerr << "Error: ran out of space when allocating local variables" << std::endl;
+        exit(1);
+    }
+}
+
 bool SymbolTable::isVarInt(std::string id)
 {
     auto localiter = localtable.find(id);

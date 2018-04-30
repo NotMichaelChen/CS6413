@@ -59,6 +59,11 @@ public:
 
     //Get specific symbols. Will exit if incorrect symbol type
     GlobalSymbol getFunction(std::string id);
+    LocalSymbol getLocalVar(std::string id);
+
+    //Manage the local memloc counter for temporaries
+    int getLocalCounter();
+    void decrementLocalCounter();
 
     //Halts if not a variable/function or does not exist
     bool isVarInt(std::string id);

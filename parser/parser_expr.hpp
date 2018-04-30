@@ -3,10 +3,17 @@
 #ifndef PARSER_EXPR_HPP
 #define PARSER_EXPR_HPP
 
-bool expr();
-bool expr1();
-bool term();
-bool factor();
-bool functioncall();
+struct ExprResult
+{
+    bool isint;
+    //Represents which memory location the result of the computation is in
+    int resultloc;
+};
+
+ExprResult expr();
+ExprResult expr1();
+ExprResult term();
+ExprResult factor();
+ExprResult functioncall();
 
 #endif

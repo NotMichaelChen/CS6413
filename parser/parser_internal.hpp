@@ -4,6 +4,8 @@
 #define PARSER_INTERNAL_HPP
 
 #include <iostream>
+#include <vector>
+#include <string>
 
 #include "scan.hpp"
 #include "symbol.hpp"
@@ -13,6 +15,7 @@
  */
 
 extern SymbolTable table;
+extern std::vector<std::string> output;
 
 //Returns whether the current token in the scanner matches the given token. If it does, advance the scanner to the next token
 bool accept(int token);
