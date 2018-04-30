@@ -3,7 +3,7 @@
 #ifndef PARSER_OPS_HPP
 #define PARSER_OPS_HPP
 
-void mulop();
+int mulop();
 int addop();
 void boolop();
 

@@ -11,12 +11,12 @@
  * Contains non-terminals that match operations
  */
 
-void mulop()
+int mulop()
 {
     if(accept(Scanner::OP_MULT))
-        ;
+        return Scanner::OP_MULT;
     else if(accept(Scanner::OP_DIV))
-        ;
+        return Scanner::OP_DIV;
     else
     {
         std::cerr << "Error: syntax error in 'mulop', with token " << Scanner::getTokenStr() << " on line "

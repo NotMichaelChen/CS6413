@@ -107,23 +107,80 @@ ExprResult expr1()
 
 ExprResult term()
 {
-    //Simply attempt to accept a minus, if you can't then just skip
-    accept(Scanner::OP_MINUS);
-    bool first_type = factor();
+    //See if a negate op is required
+    bool isnegate = accept(Scanner::OP_MINUS);
+    ExprResult first_term = factor();
+
+    //Do negate if necessary
+    if(isnegate)
+    {
+        //Format neg operator
+        std::string command = "NEG";
+        command += first_term.isint ? " " : "F ";
+        
+        //Create temporary to put neg result in
+        int memloc = table.getLocalCounter();
+        table.decrementLocalCounter();
+        command += std::to_string(first_term.resultloc) + "," + std::to_string(memloc);
+
+        //Set first_term memloc to result
+        first_term.resultloc = memloc;
+    }
+
     while(first_mulop(Scanner::getToken().code))
     {
-        mulop();
-        accept(Scanner::OP_MINUS);
+        int op = mulop();
+        isnegate = accept(Scanner::OP_MINUS);
         Scanner::Token prev = Scanner::getToken();
-        bool compare_type = factor();
+        ExprResult compare_term = factor();
 
-        if(first_type != compare_type)
+        if(first_term.isint != compare_term.isint)
         {
             std::cerr << "Error: type mismatch on line " << prev.line_number << std::endl;
         }
+
+        //Do negate if necessary
+        if(isnegate)
+        {
+            //Format neg operator
+            std::string command = "NEG";
+            command += compare_term.isint ? " " : "F ";
+            
+            //Create temporary to put neg result in
+            int memloc = table.getLocalCounter();
+            table.decrementLocalCounter();
+            command += std::to_string(compare_term.resultloc) + "," + std::to_string(memloc);
+
+            //Set compare_term memloc to result
+            compare_term.resultloc = memloc;
+        }
+
+        //format mul/div command
+        std::string command;
+        if(op == Scanner::OP_MULT)
+            command = "MUL";
+        else if(op == Scanner::OP_DIV)
+            command = "DIV";
+
+        //Place first two args
+        command += first_term.isint ? " " : "F ";
+        command += first_term.resultloc;
+        command += ",";
+        command += compare_term.resultloc;
+        
+        //get result memory loc and add it to third arg of add/sub
+        int resultloc = table.getLocalCounter();
+        table.decrementLocalCounter();
+        command += ",";
+        command += resultloc;
+
+        output.push_back(command);
+
+        //Set first_term to result of this calculation to prepare to add to next term
+        first_term = {first_term.isint, resultloc};
     }
 
-    return first_type;
+    return first_term;
 }
 
 ExprResult factor()
@@ -184,8 +241,6 @@ ExprResult functioncall()
     }
 
     expect(Scanner::RPAR);
-
-
 
     return table.isFuncInt(name.ptr);
 }
