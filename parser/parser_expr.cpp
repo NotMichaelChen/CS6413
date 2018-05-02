@@ -83,7 +83,7 @@ ExprResult expr()
             }
 
             //Copy the result temporary into the variable
-            output.push_back("COPY " + std::to_string(assignedvar.memloc) + ", " + std::to_string(result.resultloc));
+            output.push_back("COPY " + std::to_string(result.resultloc) + ", " + std::to_string(assignedvar.memloc));
 
             return result;
         }
@@ -160,6 +160,7 @@ ExprResult term()
         int memloc = table.getLocalCounter();
         table.decrementLocalCounter();
         command += std::to_string(first_term.resultloc) + "," + std::to_string(memloc);
+        output.push_back(command);
 
         //Set first_term memloc to result
         first_term.resultloc = memloc;
@@ -188,6 +189,7 @@ ExprResult term()
             int memloc = table.getLocalCounter();
             table.decrementLocalCounter();
             command += std::to_string(compare_term.resultloc) + "," + std::to_string(memloc);
+            output.push_back(command);
 
             //Set compare_term memloc to result
             compare_term.resultloc = memloc;
@@ -276,7 +278,7 @@ ExprResult functioncall()
     //Generate "push, call"
     std::string command = "PUSH";
     command += param_result.isint ? " " : "F ";
-    command += param_result.resultloc;
+    command += std::to_string(param_result.resultloc);
     output.push_back(command);
     output.push_back("CALL " + std::to_string(function.memloc));
 

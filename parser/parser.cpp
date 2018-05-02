@@ -37,6 +37,8 @@ void boolexpr();
 SymbolTable table;
 std::vector<std::string> output;
 
+int main_label = -1;
+
 void writefile()
 {
     std::ofstream ofile("outputcode");
@@ -55,6 +57,11 @@ void parse(std::string filename)
     Scanner::nextToken();
     while(Scanner::getToken().code)
         program();
+    
+    if(main_label == -1)
+        throw std::runtime_error("Error: no main function");
+    
+    output.push_back("START " + std::to_string(main_label));
 
     writefile();
 }
@@ -230,12 +237,16 @@ void functiondef()
     //Generate code to retrieve param variable from stack
     //Do not pop for main function
     //TODO: Figure out how the parameter to main works
-    //TODO: Save main label
-    if(strcmp("main", name.ptr) != 0)
+    if(strcmp("main", name.ptr) == 0)
+    {
+        main_label = funcsymbol.memloc;
+    }
+    else
     {
         LocalSymbol param = table.getLocal(argname.ptr);
         output.push_back("POP " + std::to_string(param.memloc));
     }
+
 
     body();
 
