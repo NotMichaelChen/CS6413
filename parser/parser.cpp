@@ -311,14 +311,30 @@ void stmt()
             //Just place if-label
             output.push_back("LABEL " + std::to_string(iflabel));
         }
-
     }
     else if(accept(Scanner::KW_WHILE))
     {
+        //Generate start and exit label
+        int startlabel = table.getControlCounter();
+        table.decrementControlCounter();
+        int exitlabel = table.getControlCounter();
+        table.decrementControlCounter();
+
+        //Place start label
+        output.push_back("LABEL " + std::to_string(startlabel));
+
+        //Generate conditional jump
         expect(Scanner::LPAR);
-        boolexpr(0);
+        boolexpr(exitlabel);
         expect(Scanner::RPAR);
+
         stmt();
+
+        //Generate loop-back jump
+        output.push_back("JUMP " + std::to_string(startlabel));
+
+        //Place exit label
+        output.push_back("LABEL " + std::to_string(exitlabel));
     }
     else if(accept(Scanner::KW_READ))
     {
