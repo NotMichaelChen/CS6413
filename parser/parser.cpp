@@ -369,7 +369,6 @@ void stmt()
 
 //Skip expr-list
 
-//TODO: Write expressions too, figure out how to deal with newlines
 void writeexprlist()
 {
     Scanner::Token lookahead = Scanner::getToken();
@@ -380,7 +379,25 @@ void writeexprlist()
         output.push_back(command + "\"");
     }
     else if(first_expr(Scanner::getToken().code))
-        expr();
+    {
+        std::string command = "WRITE";
+
+        ExprResult result = expr();
+
+        command += result.isint ? " " : "F ";
+        //TODO: Put into function
+        if(result.resultloc < 0)
+        {
+            if(result.isint)
+                command += "#" + std::to_string(result.intliteral);
+            else
+                command += "#" + std::to_string(result.floatliteral);
+        }
+        else
+            command += std::to_string(result.resultloc);
+        
+        output.push_back(command);
+    }
     else
     {
         std::cerr << "Error: syntax error in 'writeexprlist', with token " << Scanner::getTokenStr() << " on line "
@@ -397,7 +414,25 @@ void writeexprlist()
             output.push_back(command + "\"");
         }
         else if(first_expr(Scanner::getToken().code))
-            expr();
+        {
+            std::string command = "WRITE";
+
+            ExprResult result = expr();
+
+            command += result.isint ? " " : "F ";
+            //TODO: Put into function
+            if(result.resultloc < 0)
+            {
+                if(result.isint)
+                    command += "#" + std::to_string(result.intliteral);
+                else
+                    command += "#" + std::to_string(result.floatliteral);
+            }
+            else
+                command += std::to_string(result.resultloc);
+            
+            output.push_back(command);
+        }
         else
         {
             std::cerr << "Error: syntax error in 'writeexprlist', with token " << Scanner::getTokenStr() << " on line "
