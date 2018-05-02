@@ -453,4 +453,7 @@ void writeexprlist()
             exit(1);
         }
     }
+
+    //Newline after every write list
+    output.push_back("NEWLINE");
 }
