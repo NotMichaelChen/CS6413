@@ -231,7 +231,10 @@ void functiondef()
     //Do not pop for main function
     //TODO: Figure out how the parameter to main works
     if(strcmp("main", name.ptr) != 0)
-        output.push_back("POP 999");
+    {
+        LocalSymbol param = table.getLocal(argname.ptr);
+        output.push_back("POP " + std::to_string(param.memloc));
+    }
 
     body();
 

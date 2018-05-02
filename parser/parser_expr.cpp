@@ -242,15 +242,27 @@ ExprResult functioncall()
 
     expect(Scanner::LPAR);
 
-    bool type = expr();
+    ExprResult param_result = expr();
     //Check param type
     //At this point, assume function is valid (since it passed through printFuncUse just fine)
-    if(type != function.param_is_int)
+    if(param_result.isint != function.param_is_int)
     {
         std::cerr << "Error: type mismatch on line " << name.line_number << std::endl;
     }
 
     expect(Scanner::RPAR);
 
-    return table.isFuncInt(name.ptr);
+    //Generate "push, call"
+    std::string command = "PUSH";
+    command += param_result.isint ? " " : "F ";
+    command += param_result.resultloc;
+    output.push_back(command);
+    output.push_back("CALL " + std::to_string(function.memloc));
+
+    //Generate "pop" to get result
+    int resultloc = table.getLocalCounter();
+    table.decrementLocalCounter();
+    output.push_back("POP " + std::to_string(resultloc));
+
+    return {function.is_int, resultloc};
 }

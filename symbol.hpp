@@ -60,7 +60,7 @@ public:
     //Get specific symbols. Will exit if incorrect symbol type
     GlobalSymbol getFunction(std::string id);
 
-    //Manage the local memloc counter for temporaries
+    //Manage the memloc counter for local variables
     int getLocalCounter();
     void decrementLocalCounter();
 
