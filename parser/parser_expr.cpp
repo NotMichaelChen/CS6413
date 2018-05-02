@@ -83,7 +83,20 @@ ExprResult expr()
             }
 
             //Copy the result temporary into the variable
-            output.push_back("COPY " + std::to_string(result.resultloc) + ", " + std::to_string(assignedvar.memloc));
+            std::string command = "COPY";
+            command += result.isint ? " " : "F ";
+            //TODO: Make into function
+            if(result.resultloc < 0)
+            {
+                if(result.isint)
+                    command += "#" + std::to_string(result.intliteral);
+                else
+                    command += "#" + std::to_string(result.floatliteral);
+            }
+            else
+                command += std::to_string(result.resultloc);
+
+            output.push_back(command + ", " + std::to_string(assignedvar.memloc));
 
             return result;
         }
