@@ -28,8 +28,8 @@ void kind();
 void varlist(bool dec, bool global, bool isint);
 void functiondecl();
 void functiondef();
-void body();
-void stmt();
+void body(bool is_main);
+void stmt(bool is_main);
 //expr-list is unused
 void writeexprlist();
 
@@ -237,7 +237,9 @@ void functiondef()
     //Generate code to retrieve param variable from stack
     //Do not pop for main function
     //TODO: Figure out how the parameter to main works
-    if(strcmp("main", name.ptr) == 0)
+    bool is_main = strcmp("main", name.ptr) == 0;
+
+    if(is_main)
     {
         main_label = funcsymbol.memloc;
     }
@@ -247,15 +249,15 @@ void functiondef()
         output.push_back("POP " + std::to_string(param.memloc));
     }
 
-    body();
+    body(is_main);
 
     //main function should have a "stop" at the end
-    if(strcmp("main", name.ptr) == 0)
+    if(is_main)
         output.push_back("STOP");
 }
 
 //Assume that all variable declarations comes before all statements
-void body()
+void body(bool is_main)
 {
     expect(Scanner::LBRACE);
 
@@ -267,14 +269,14 @@ void body()
     int token = Scanner::getToken().code;
     while(first_stmt(token))
     {
-        stmt();
+        stmt(is_main);
         token = Scanner::getToken().code;
     }
 
     expect(Scanner::RBRACE);
 }
 
-void stmt()
+void stmt(bool is_main)
 {
     if(accept(Scanner::KW_IF))
     {
@@ -287,7 +289,7 @@ void stmt()
         boolexpr(iflabel);
         expect(Scanner::RPAR);
 
-        stmt();
+        stmt(is_main);
 
         if(accept(Scanner::KW_ELSE))
         {
@@ -301,7 +303,7 @@ void stmt()
             //Place if-label
             output.push_back("LABEL " + std::to_string(iflabel));
 
-            stmt();
+            stmt(is_main);
 
             //Place ending label
             output.push_back("LABEL " + std::to_string(endinglabel));
@@ -328,7 +330,7 @@ void stmt()
         boolexpr(exitlabel);
         expect(Scanner::RPAR);
 
-        stmt();
+        stmt(is_main);
 
         //Generate loop-back jump
         output.push_back("JUMP " + std::to_string(startlabel));
@@ -348,15 +350,26 @@ void stmt()
     }
     else if(accept(Scanner::KW_RETURN))
     {
-        expr();
+        ExprResult result = expr();
         expect(Scanner::SEMICOLON);
+
+        //Only generate returns for non-main functions
+        if(!is_main)
+        {
+            //Push-Return
+            std::string command = "PUSH";
+            command += result.isint ? " " : "F ";
+            command += std::to_string(result.resultloc);
+            output.push_back(command);
+            output.push_back("RETURN");
+        }
     }
     else if(accept(Scanner::LBRACE))
     {
-        stmt();
+        stmt(is_main);
         while(!accept(Scanner::RBRACE))
         {
-            stmt();
+            stmt(is_main);
         }
     }
     //Assume it's an expression case
