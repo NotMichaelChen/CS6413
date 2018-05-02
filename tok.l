@@ -74,8 +74,8 @@ int mylength;
 "="                     return(OP_ASSIGN);
 "=="                    return(OP_EQ); /* equal */
 "<"                     return(OP_LT); /* less than */
-">"                     return(OP_LE); /* less than or equal */
-"<="                    return(OP_GT); /* greater than */
+">"                     return(OP_GT); /* greater than */
+"<="                    return(OP_LE); /* less than or equal */
 ">="                    return(OP_GE); /* greater than or equal */
 "("                     return(LPAR);
 ")"                     return(RPAR);
