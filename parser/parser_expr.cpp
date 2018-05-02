@@ -25,19 +25,41 @@ void formatArithArgs(std::string& command, ExprResult& lhs, ExprResult& rhs)
     if(lhs.resultloc < 0)
     {
         if(lhs.isint)
-            command += "#" + lhs.intliteral;
+            command += "#" + std::to_string(lhs.intliteral);
         else
             command += "#" + std::to_string(lhs.floatliteral);
     }
+    else
+        command += std::to_string(lhs.resultloc);
 
     command += ",";
 
     if(rhs.resultloc < 0)
     {
         if(rhs.isint)
-            command += "#" + rhs.intliteral;
+            command += "#" + std::to_string(rhs.intliteral);
         else
             command += "#" + std::to_string(rhs.floatliteral);
+    }
+    else
+        command += std::to_string(rhs.resultloc);
+}
+
+//Decodes a scanner code into the correct operation
+std::string decodeOpcode(int code)
+{
+    switch(code)
+    {
+        case Scanner::OP_PLUS:
+            return "ADD";
+        case Scanner::OP_MINUS:
+            return "SUB";
+        case Scanner::OP_MULT:
+            return "MUL";
+        case Scanner::OP_DIV:
+            return "DIV";
+        default:
+            return "ERROR";
     }
 }
 
@@ -100,7 +122,7 @@ ExprResult expr1()
         }
 
         //format add/sub command
-        std::string command = Scanner::decode(op);
+        std::string command = decodeOpcode(op);
         command += first_term.isint ? " " : "F ";
 
         //Place first two args
@@ -110,7 +132,7 @@ ExprResult expr1()
         int resultloc = table.getLocalCounter();
         table.decrementLocalCounter();
         command += ",";
-        command += resultloc;
+        command += std::to_string(resultloc);
 
         output.push_back(command);
 
@@ -172,7 +194,7 @@ ExprResult term()
         }
 
         //format mul/div command
-        std::string command = Scanner::decode(op);
+        std::string command = decodeOpcode(op);
         command += first_term.isint ? " " : "F ";
 
         //Place first two args
@@ -182,7 +204,7 @@ ExprResult term()
         int resultloc = table.getLocalCounter();
         table.decrementLocalCounter();
         command += ",";
-        command += resultloc;
+        command += std::to_string(resultloc);
 
         output.push_back(command);
 
@@ -229,7 +251,6 @@ ExprResult factor()
     }
 }
 
-//TODO: finish writing intermediate code putting the parameter on the stack
 ExprResult functioncall()
 {
     //Get the name of the function and print its use

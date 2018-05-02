@@ -230,6 +230,7 @@ void functiondef()
     //Generate code to retrieve param variable from stack
     //Do not pop for main function
     //TODO: Figure out how the parameter to main works
+    //TODO: Save main label
     if(strcmp("main", name.ptr) != 0)
     {
         LocalSymbol param = table.getLocal(argname.ptr);

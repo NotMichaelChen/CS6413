@@ -77,7 +77,7 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
 void SymbolTable::clearLocal()
 {
     localtable.clear();
-    localcounter = 999;
+    //Don't clear local variable count since we need to ensure 
 }
 
 LocalSymbol SymbolTable::getLocal(std::string id)
