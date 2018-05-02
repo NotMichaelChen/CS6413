@@ -294,7 +294,7 @@ ExprResult functioncall()
 void boolexpr(int endlabel)
 {
     //Used only for line number
-    Scanner::Token prev;
+    Scanner::Token prev = Scanner::getToken();
 
     ExprResult lhs = expr();
     int code = boolop();
@@ -332,5 +332,9 @@ void boolexpr(int endlabel)
 
     command += lhs.isint ? " " : "F ";
     formatExprArgs(command, lhs, rhs);
+
+    //Add label to jump to
+    command += "," + std::to_string(endlabel);
+
     output.push_back(command);
 }

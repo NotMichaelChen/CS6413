@@ -278,19 +278,45 @@ void stmt()
 {
     if(accept(Scanner::KW_IF))
     {
+        //Reserve a label to jump to from first if
+        int iflabel = table.getControlCounter();
+        table.decrementControlCounter();
+
+        //Generate jump
         expect(Scanner::LPAR);
-        boolexpr();
+        boolexpr(iflabel);
         expect(Scanner::RPAR);
+
         stmt();
+
         if(accept(Scanner::KW_ELSE))
         {
+            //Reserve an ending label
+            int endinglabel = table.getControlCounter();
+            table.decrementControlCounter();
+
+            //Jump before entering else
+            output.push_back("JUMP " + std::to_string(endinglabel));
+
+            //Place if-label
+            output.push_back("LABEL " + std::to_string(iflabel));
+
             stmt();
+
+            //Place ending label
+            output.push_back("LABEL " + std::to_string(endinglabel));
         }
+        else
+        {
+            //Just place if-label
+            output.push_back("LABEL " + std::to_string(iflabel));
+        }
+
     }
     else if(accept(Scanner::KW_WHILE))
     {
         expect(Scanner::LPAR);
-        boolexpr();
+        boolexpr(0);
         expect(Scanner::RPAR);
         stmt();
     }
