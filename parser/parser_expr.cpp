@@ -19,7 +19,7 @@
 //All return types assume int=true, float=false
 
 //Puts the correct numbers into the command string
-void formatArithArgs(std::string& command, ExprResult& lhs, ExprResult& rhs)
+void formatExprArgs(std::string& command, ExprResult& lhs, ExprResult& rhs)
 {
     //Place first two args
     if(lhs.resultloc < 0)
@@ -126,7 +126,7 @@ ExprResult expr1()
         command += first_term.isint ? " " : "F ";
 
         //Place first two args
-        formatArithArgs(command, first_term, compare_term);
+        formatExprArgs(command, first_term, compare_term);
         
         //get result memory loc and add it to third arg of add/sub
         int resultloc = table.getLocalCounter();
@@ -200,7 +200,7 @@ ExprResult term()
         command += first_term.isint ? " " : "F ";
 
         //Place first two args
-        formatArithArgs(command, first_term, compare_term);
+        formatExprArgs(command, first_term, compare_term);
         
         //get result memory loc and add it to third arg of add/sub
         int resultloc = table.getLocalCounter();
@@ -288,4 +288,49 @@ ExprResult functioncall()
     output.push_back("POP " + std::to_string(resultloc));
 
     return {function.is_int, resultloc};
+}
+
+//Takes label to either the else block, or the end of the if/while statement
+void boolexpr(int endlabel)
+{
+    //Used only for line number
+    Scanner::Token prev;
+
+    ExprResult lhs = expr();
+    int code = boolop();
+    ExprResult rhs = expr();
+
+    if(lhs.isint != rhs.isint)
+    {
+        std::cerr << "Error: type mismatch on line " << prev.line_number << std::endl;
+    }
+
+    std::string command;
+
+    //In both if/while cases, we only want to jump when the codition is false, so invert command
+    switch(code)
+    {
+        case Scanner::OP_LT:
+            command = "JGE";
+            break;
+        case Scanner::OP_GT:
+            command = "JLE";
+            break;
+        case Scanner::OP_EQ:
+            command = "JNE";
+            break;
+        case Scanner::OP_GE:
+            command = "JLT";
+            break;
+        case Scanner::OP_LE:
+            command = "JGT";
+            break;
+        default:
+            command = "";
+            break;
+    }
+
+    command += lhs.isint ? " " : "F ";
+    formatExprArgs(command, lhs, rhs);
+    output.push_back(command);
 }

@@ -32,13 +32,13 @@ void body();
 void stmt();
 //expr-list is unused
 void writeexprlist();
-void boolexpr();
 
 SymbolTable table;
 std::vector<std::string> output;
 
 int main_label = -1;
 
+//TODO: Do not generate code if there were type errors
 void writefile()
 {
     std::ofstream ofile("outputcode");
@@ -247,7 +247,6 @@ void functiondef()
         output.push_back("POP " + std::to_string(param.memloc));
     }
 
-
     body();
 
     //main function should have a "stop" at the end
@@ -364,11 +363,4 @@ void writeexprlist()
             exit(1);
         }
     }
-}
-
-void boolexpr()
-{
-    expr();
-    boolop();
-    expr();
 }

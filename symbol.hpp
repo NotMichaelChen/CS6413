@@ -64,6 +64,10 @@ public:
     int getLocalCounter();
     void decrementLocalCounter();
 
+    //Manage the label counter for control statements
+    int getControlCounter();
+    void decrementControlCounter();
+
     //Halts if not a variable/function or does not exist
     bool isVarInt(std::string id);
     bool isFuncInt(std::string id);
@@ -75,7 +79,8 @@ private:
 
     int globalcounter;
     int localcounter;
-    int labelcounter;
+    int functionlabelcounter;
+    int controllabelcounter;
 };
 
 #endif

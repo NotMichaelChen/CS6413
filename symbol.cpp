@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-SymbolTable::SymbolTable() : globalcounter(1), localcounter(999), labelcounter(1)
+SymbolTable::SymbolTable() : globalcounter(1), localcounter(999), functionlabelcounter(1), controllabelcounter(999)
 {}
 
 bool SymbolTable::insertLocal(std::string id, bool isi, int line)
@@ -39,8 +39,13 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
         //func
         if(isf)
         {
-            addr = labelcounter;
-            labelcounter++;
+            addr = functionlabelcounter;
+            functionlabelcounter++;
+            if(functionlabelcounter >= controllabelcounter)
+            {
+                std::cerr << "Error, ran out of space when allocating function labels" << std::endl;
+                exit(1);
+            }
         }
         //variable decl
         else
@@ -126,6 +131,21 @@ void SymbolTable::decrementLocalCounter()
     if(localcounter <= globalcounter)
     {
         std::cerr << "Error: ran out of space when allocating local variables" << std::endl;
+        exit(1);
+    }
+}
+
+int SymbolTable::getControlCounter()
+{
+    return controllabelcounter;
+}
+
+void SymbolTable::decrementControlCounter()
+{
+    controllabelcounter--;
+    if(controllabelcounter <= functionlabelcounter)
+    {
+        std::cerr << "Error: ran out of space when allocating control statement labels" << std::endl;
         exit(1);
     }
 }

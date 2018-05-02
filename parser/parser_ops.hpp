@@ -5,6 +5,6 @@
 
 int mulop();
 int addop();
-void boolop();
+int boolop();
 
 #endif

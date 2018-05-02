@@ -19,5 +19,6 @@ ExprResult expr1();
 ExprResult term();
 ExprResult factor();
 ExprResult functioncall();
+void boolexpr(int endlabel);
 
 #endif

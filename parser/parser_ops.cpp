@@ -40,18 +40,18 @@ int addop()
 }
 
 
-void boolop()
+int boolop()
 {
     if(accept(Scanner::OP_LT))
-        ;
+        return Scanner::OP_LT;
     else if(accept(Scanner::OP_GT))
-        ;
+        return Scanner::OP_GT;
     else if(accept(Scanner::OP_EQ))
-        ;
+        return Scanner::OP_EQ;
     else if(accept(Scanner::OP_GE))
-        ;
+        return Scanner::OP_GE;
     else if(accept(Scanner::OP_LE))
-        ;
+        return Scanner::OP_LE;
     else
     {
         std::cerr << "Error: syntax error in 'boolop', with token " << Scanner::getTokenStr() << " on line "
