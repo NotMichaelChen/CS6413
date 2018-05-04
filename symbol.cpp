@@ -71,6 +71,17 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
         iter->second.line_number = line;
         return true;
     }
+    //Check if we have a func and are receiving a decl, and check that both funcs agree
+    else if(isdec && iter->second.is_function && iter->second.param_is_int == pii && iter->second.is_int == isi)
+    {
+        //Only update line number if we have a decl
+        if(iter->second.is_decl)
+        {
+            iter->second.line_number = line;
+        }
+        return true;
+    }
+    //Otherwise it's an error
     else
     {
         std::cerr << "Error: inserting global " << id << " when it already exists on line " << iter->second.line_number
