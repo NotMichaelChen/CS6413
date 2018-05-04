@@ -28,8 +28,8 @@ void kind();
 void varlist(bool dec, bool global, bool isint);
 void functiondecl();
 void functiondef();
-void body(bool is_main);
-void stmt(bool is_main);
+void body(bool return_int);
+void stmt(bool return_int);
 //expr-list is unused
 void writeexprlist();
 
@@ -253,10 +253,19 @@ void functiondef()
     //main function should have a "stop" at the end
     if(is_main)
         output.push_back("STOP");
+    //otherwise insert a safety return
+    else
+    {
+        std::string command = "PUSH";
+        command += funcsymbol.is_int ? " " : "F ";
+        command += "#0";
+        output.push_back(command);
+        output.push_back("RETURN");
+    }
 }
 
 //Assume that all variable declarations comes before all statements
-void body(bool is_main)
+void body(bool return_int)
 {
     expect(Scanner::LBRACE);
 
@@ -268,15 +277,16 @@ void body(bool is_main)
     int token = Scanner::getToken().code;
     while(first_stmt(token))
     {
-        stmt(is_main);
+        stmt(return_int);
         token = Scanner::getToken().code;
     }
 
     expect(Scanner::RBRACE);
 }
 
-void stmt(bool is_main)
+void stmt(bool return_int)
 {
+    Scanner::Token linetoken = Scanner::getToken();
     if(accept(Scanner::KW_IF))
     {
         //Reserve a label to jump to from first if
@@ -288,7 +298,7 @@ void stmt(bool is_main)
         boolexpr(iflabel);
         expect(Scanner::RPAR);
 
-        stmt(is_main);
+        stmt(return_int);
 
         if(accept(Scanner::KW_ELSE))
         {
@@ -302,7 +312,7 @@ void stmt(bool is_main)
             //Place if-label
             output.push_back("LABEL " + std::to_string(iflabel));
 
-            stmt(is_main);
+            stmt(return_int);
 
             //Place ending label
             output.push_back("LABEL " + std::to_string(endinglabel));
@@ -329,7 +339,7 @@ void stmt(bool is_main)
         boolexpr(exitlabel);
         expect(Scanner::RPAR);
 
-        stmt(is_main);
+        stmt(return_int);
 
         //Generate loop-back jump
         output.push_back("JUMP " + std::to_string(startlabel));
@@ -352,23 +362,31 @@ void stmt(bool is_main)
         ExprResult result = expr();
         expect(Scanner::SEMICOLON);
 
-        //Only generate returns for non-main functions
-        if(!is_main)
+        if(return_int != result.isint)
+            std::cerr << "Error: type mismatch on return in line " + linetoken.line_number << std::endl;
+
+        //Push-Return
+        std::string command = "PUSH";
+        command += result.isint ? " " : "F ";
+        command += std::to_string(result.resultloc);
+        //TODO: Make into function
+        if(result.resultloc < 0)
         {
-            //Push-Return
-            std::string command = "PUSH";
-            command += result.isint ? " " : "F ";
-            command += std::to_string(result.resultloc);
-            output.push_back(command);
-            output.push_back("RETURN");
+            if(result.isint)
+                command += "#" + std::to_string(result.intliteral);
+            else
+                command += "#" + std::to_string(result.floatliteral);
         }
+        else
+            command += std::to_string(result.resultloc);
+        output.push_back("RETURN");
     }
     else if(accept(Scanner::LBRACE))
     {
-        stmt(is_main);
+        stmt(return_int);
         while(!accept(Scanner::RBRACE))
         {
-            stmt(is_main);
+            stmt(return_int);
         }
     }
     //Assume it's an expression case

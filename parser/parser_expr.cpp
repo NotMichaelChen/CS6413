@@ -291,7 +291,16 @@ ExprResult functioncall()
     //Generate "push, call"
     std::string command = "PUSH";
     command += param_result.isint ? " " : "F ";
-    command += std::to_string(param_result.resultloc);
+    //TODO: Make into function
+    if(param_result.resultloc < 0)
+    {
+        if(param_result.isint)
+            command += "#" + std::to_string(param_result.intliteral);
+        else
+            command += "#" + std::to_string(param_result.floatliteral);
+    }
+    else
+        command += std::to_string(param_result.resultloc);
     output.push_back(command);
     output.push_back("CALL " + std::to_string(function.memloc));
 

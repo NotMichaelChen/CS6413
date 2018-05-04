@@ -84,7 +84,7 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
     //Otherwise it's an error
     else
     {
-        std::cerr << "Error: inserting global " << id << " when it already exists on line " << iter->second.line_number
+        std::cerr << "Error: inserting global " << id << ", conflict with statement on line " << iter->second.line_number
             << std::endl;
         return false;
     }
