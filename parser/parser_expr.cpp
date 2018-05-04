@@ -18,31 +18,33 @@
 
 //All return types assume int=true, float=false
 
+/*****************************
+ * 
+ * Formatting/Helper Functions
+ * 
+ ****************************/
+
+//Formats an expression result onto a command
+void formatExpr(std::string& command, ExprResult& arg)
+{
+    if(arg.resultloc < 0)
+    {
+        if(arg.isint)
+            command += "#" + std::to_string(arg.intliteral);
+        else
+            command += "#" + std::to_string(arg.floatliteral);
+    }
+    else
+        command += std::to_string(arg.resultloc);
+}
+
 //Puts the correct numbers into the command string
 void formatExprArgs(std::string& command, ExprResult& lhs, ExprResult& rhs)
 {
     //Place first two args
-    if(lhs.resultloc < 0)
-    {
-        if(lhs.isint)
-            command += "#" + std::to_string(lhs.intliteral);
-        else
-            command += "#" + std::to_string(lhs.floatliteral);
-    }
-    else
-        command += std::to_string(lhs.resultloc);
-
+    formatExpr(command, lhs);
     command += ",";
-
-    if(rhs.resultloc < 0)
-    {
-        if(rhs.isint)
-            command += "#" + std::to_string(rhs.intliteral);
-        else
-            command += "#" + std::to_string(rhs.floatliteral);
-    }
-    else
-        command += std::to_string(rhs.resultloc);
+    formatExpr(command, rhs);
 }
 
 //Decodes a scanner code into the correct operation
@@ -62,6 +64,12 @@ std::string decodeOpcode(int code)
             return "ERROR";
     }
 }
+
+/************************
+ * 
+ * Non-terminal Functions
+ * 
+ ***********************/
 
 ExprResult expr()
 {
@@ -85,16 +93,7 @@ ExprResult expr()
             //Copy the result temporary into the variable
             std::string command = "COPY";
             command += result.isint ? " " : "F ";
-            //TODO: Make into function
-            if(result.resultloc < 0)
-            {
-                if(result.isint)
-                    command += "#" + std::to_string(result.intliteral);
-                else
-                    command += "#" + std::to_string(result.floatliteral);
-            }
-            else
-                command += std::to_string(result.resultloc);
+            formatExpr(command, result);
 
             output.push_back(command + ", " + std::to_string(assignedvar.memloc));
 
@@ -291,16 +290,7 @@ ExprResult functioncall()
     //Generate "push, call"
     std::string command = "PUSH";
     command += param_result.isint ? " " : "F ";
-    //TODO: Make into function
-    if(param_result.resultloc < 0)
-    {
-        if(param_result.isint)
-            command += "#" + std::to_string(param_result.intliteral);
-        else
-            command += "#" + std::to_string(param_result.floatliteral);
-    }
-    else
-        command += std::to_string(param_result.resultloc);
+    formatExpr(command, param_result);
     output.push_back(command);
     output.push_back("CALL " + std::to_string(function.memloc));
 

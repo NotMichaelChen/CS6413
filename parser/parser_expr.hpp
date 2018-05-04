@@ -3,6 +3,8 @@
 #ifndef PARSER_EXPR_HPP
 #define PARSER_EXPR_HPP
 
+#include <string>
+
 struct ExprResult
 {
     bool isint;
@@ -13,6 +15,8 @@ struct ExprResult
     int intliteral;
     float floatliteral;
 };
+
+void formatExpr(std::string& command, ExprResult& arg);
 
 ExprResult expr();
 ExprResult expr1();

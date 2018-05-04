@@ -368,16 +368,8 @@ void stmt(bool return_int)
         //Push-Return
         std::string command = "PUSH";
         command += result.isint ? " " : "F ";
-        //TODO: Make into function
-        if(result.resultloc < 0)
-        {
-            if(result.isint)
-                command += "#" + std::to_string(result.intliteral);
-            else
-                command += "#" + std::to_string(result.floatliteral);
-        }
-        else
-            command += std::to_string(result.resultloc);
+        formatExpr(command, result);
+
         output.push_back(command);
         output.push_back("RETURN");
     }
@@ -415,16 +407,7 @@ void writeexprlist()
         ExprResult result = expr();
 
         command += result.isint ? " " : "F ";
-        //TODO: Put into function
-        if(result.resultloc < 0)
-        {
-            if(result.isint)
-                command += "#" + std::to_string(result.intliteral);
-            else
-                command += "#" + std::to_string(result.floatliteral);
-        }
-        else
-            command += std::to_string(result.resultloc);
+        formatExpr(command, result);
         
         output.push_back(command);
     }
@@ -451,16 +434,7 @@ void writeexprlist()
             ExprResult result = expr();
 
             command += result.isint ? " " : "F ";
-            //TODO: Put into function
-            if(result.resultloc < 0)
-            {
-                if(result.isint)
-                    command += "#" + std::to_string(result.intliteral);
-                else
-                    command += "#" + std::to_string(result.floatliteral);
-            }
-            else
-                command += std::to_string(result.resultloc);
+            formatExpr(command, result);
             
             output.push_back(command);
         }
