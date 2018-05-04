@@ -248,7 +248,7 @@ void functiondef()
         output.push_back("POP " + std::to_string(param.memloc));
     }
 
-    body(is_main);
+    body(funcsymbol.is_int);
 
     //main function should have a "stop" at the end
     if(is_main)
@@ -363,12 +363,11 @@ void stmt(bool return_int)
         expect(Scanner::SEMICOLON);
 
         if(return_int != result.isint)
-            std::cerr << "Error: type mismatch on return in line " + linetoken.line_number << std::endl;
+            std::cerr << "Error: type mismatch on return in line " + std::to_string(linetoken.line_number) << std::endl;
 
         //Push-Return
         std::string command = "PUSH";
         command += result.isint ? " " : "F ";
-        command += std::to_string(result.resultloc);
         //TODO: Make into function
         if(result.resultloc < 0)
         {
@@ -379,6 +378,7 @@ void stmt(bool return_int)
         }
         else
             command += std::to_string(result.resultloc);
+        output.push_back(command);
         output.push_back("RETURN");
     }
     else if(accept(Scanner::LBRACE))
