@@ -437,6 +437,7 @@ void writeexprlist()
 
     while(accept(Scanner::COMMA))
     {
+        lookahead = Scanner::getToken();
         if(accept(Scanner::STRING_LIT))
         {
             std::string command = "WRITES \"";
