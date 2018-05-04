@@ -16,6 +16,7 @@
 
 extern SymbolTable table;
 extern std::vector<std::string> output;
+extern bool type_error;
 
 //Returns whether the current token in the scanner matches the given token. If it does, advance the scanner to the next token
 bool accept(int token);

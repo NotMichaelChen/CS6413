@@ -2,6 +2,8 @@
 
 #include "parser_internal.hpp"
 
+bool type_error = false;
+
 bool accept(int token)
 {
     if(Scanner::getToken().code == token)

@@ -38,13 +38,15 @@ std::vector<std::string> output;
 
 int main_label = -1;
 
-//TODO: Do not generate code if there were type errors
 void writefile()
 {
-    std::ofstream ofile("outputcode");
-    for(size_t i = 0; i < output.size(); i++)
+    if(!type_error)
     {
-        ofile << output[i] << '\n';
+        std::ofstream ofile("outputcode");
+        for(size_t i = 0; i < output.size(); i++)
+        {
+            ofile << output[i] << '\n';
+        }
     }
 }
 
@@ -363,7 +365,10 @@ void stmt(bool return_int)
         expect(Scanner::SEMICOLON);
 
         if(return_int != result.isint)
+        {
             std::cerr << "Error: type mismatch on return in line " + std::to_string(linetoken.line_number) << std::endl;
+            type_error = true;
+        }
 
         //Push-Return
         std::string command = "PUSH";

@@ -88,6 +88,7 @@ ExprResult expr()
             if(table.isVarInt(lookahead.ptr) != result.isint)
             {
                 std::cerr << "Error: type mismatch on line " << lookahead.line_number << std::endl;
+                type_error = true;
             }
 
             //Copy the result temporary into the variable
@@ -131,6 +132,7 @@ ExprResult expr1()
         if(first_term.isint != compare_term.isint)
         {
             std::cerr << "Error: type mismatch on line " << prev.line_number << std::endl;
+            type_error = true;
         }
 
         //format add/sub command
@@ -188,6 +190,7 @@ ExprResult term()
         if(first_term.isint != compare_term.isint)
         {
             std::cerr << "Error: type mismatch on line " << prev.line_number << std::endl;
+            type_error = true;
         }
 
         //Do negate if necessary
@@ -283,6 +286,7 @@ ExprResult functioncall()
     if(param_result.isint != function.param_is_int)
     {
         std::cerr << "Error: type mismatch on line " << name.line_number << std::endl;
+        type_error = true;
     }
 
     expect(Scanner::RPAR);
@@ -315,6 +319,7 @@ void boolexpr(int endlabel)
     if(lhs.isint != rhs.isint)
     {
         std::cerr << "Error: type mismatch on line " << prev.line_number << std::endl;
+        type_error = true;
     }
 
     std::string command;
