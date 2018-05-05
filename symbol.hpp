@@ -77,10 +77,8 @@ private:
     std::unordered_map<std::string, LocalSymbol> localtable;
     std::unordered_map<std::string, GlobalSymbol> globaltable;
 
-    int globalcounter;
-    int localcounter;
+    int variablecounter;
     int functionlabelcounter;
-    int controllabelcounter;
 };
 
 #endif

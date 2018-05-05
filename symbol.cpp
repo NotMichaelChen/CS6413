@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-SymbolTable::SymbolTable() : globalcounter(1), localcounter(999), functionlabelcounter(1), controllabelcounter(999)
+SymbolTable::SymbolTable() : variablecounter(0), functionlabelcounter(0)
 {}
 
 bool SymbolTable::insertLocal(std::string id, bool isi, int line)
@@ -12,9 +12,9 @@ bool SymbolTable::insertLocal(std::string id, bool isi, int line)
     auto iter = localtable.find(id);
     if(iter == localtable.end())
     {
-        localtable[id] = {isi, line, localcounter};
-        localcounter--;
-        if(localcounter <= globalcounter)
+        localtable[id] = {isi, line, variablecounter};
+        variablecounter++;
+        if(variablecounter > 999)
         {
             std::cerr << "Error: ran out of space when allocating local variables" << std::endl;
             exit(1);
@@ -41,7 +41,7 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
         {
             addr = functionlabelcounter;
             functionlabelcounter++;
-            if(functionlabelcounter >= controllabelcounter)
+            if(functionlabelcounter > 999)
             {
                 std::cerr << "Error, ran out of space when allocating function labels" << std::endl;
                 exit(1);
@@ -50,9 +50,9 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
         //variable decl
         else
         {
-            addr = globalcounter;
-            globalcounter++;
-            if(globalcounter >= localcounter)
+            addr = variablecounter;
+            variablecounter++;
+            if(variablecounter > 999)
             {
                 std::cerr << "Error, ran out of space when allocating global variables" << std::endl;
                 exit(1);
@@ -93,7 +93,7 @@ bool SymbolTable::insertGlobal(std::string id, bool isf, bool isdec, bool pii, b
 void SymbolTable::clearLocal()
 {
     localtable.clear();
-    //Don't clear local variable count since we need to ensure 
+    //Don't clear local variable count since we need to ensure that memory locations stay distinct
 }
 
 LocalSymbol SymbolTable::getLocal(std::string id)
@@ -133,13 +133,13 @@ GlobalSymbol SymbolTable::getFunction(std::string id)
 
 int SymbolTable::getLocalCounter()
 {
-    return localcounter;
+    return variablecounter;
 }
 
 void SymbolTable::decrementLocalCounter()
 {
-    localcounter--;
-    if(localcounter <= globalcounter)
+    variablecounter++;
+    if(variablecounter >= 999)
     {
         std::cerr << "Error: ran out of space when allocating local variables" << std::endl;
         exit(1);
@@ -148,13 +148,13 @@ void SymbolTable::decrementLocalCounter()
 
 int SymbolTable::getControlCounter()
 {
-    return controllabelcounter;
+    return functionlabelcounter;
 }
 
 void SymbolTable::decrementControlCounter()
 {
-    controllabelcounter--;
-    if(controllabelcounter <= functionlabelcounter)
+    functionlabelcounter++;
+    if(functionlabelcounter > 999)
     {
         std::cerr << "Error: ran out of space when allocating control statement labels" << std::endl;
         exit(1);
