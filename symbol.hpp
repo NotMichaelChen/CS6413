@@ -9,13 +9,6 @@
  * Defines the symbol table used during parsing to verify variable usage
  */
 
-/* (move to readme later)
- * Memory Allocation Policy
- * global variables start at beginning, local variables start at end (999 for now)
- * having local variables start at end means param variable is *ALWAYS* at address 999
- * 
- */
-
 //No functions may be local
 struct LocalSymbol
 {
@@ -65,8 +58,8 @@ public:
     void decrementLocalCounter();
 
     //Manage the label counter for control statements
-    int getControlCounter();
-    void decrementControlCounter();
+    int getLabelCounter();
+    void decrementLabelCounter();
 
     //Halts if not a variable/function or does not exist
     bool isVarInt(std::string id);

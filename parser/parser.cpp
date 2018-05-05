@@ -292,8 +292,8 @@ void stmt(bool return_int)
     if(accept(Scanner::KW_IF))
     {
         //Reserve a label to jump to from first if
-        int iflabel = table.getControlCounter();
-        table.decrementControlCounter();
+        int iflabel = table.getLabelCounter();
+        table.decrementLabelCounter();
 
         //Generate jump
         expect(Scanner::LPAR);
@@ -305,8 +305,8 @@ void stmt(bool return_int)
         if(accept(Scanner::KW_ELSE))
         {
             //Reserve an ending label
-            int endinglabel = table.getControlCounter();
-            table.decrementControlCounter();
+            int endinglabel = table.getLabelCounter();
+            table.decrementLabelCounter();
 
             //Jump before entering else
             output.push_back("JUMP " + std::to_string(endinglabel));
@@ -328,10 +328,10 @@ void stmt(bool return_int)
     else if(accept(Scanner::KW_WHILE))
     {
         //Generate start and exit label
-        int startlabel = table.getControlCounter();
-        table.decrementControlCounter();
-        int exitlabel = table.getControlCounter();
-        table.decrementControlCounter();
+        int startlabel = table.getLabelCounter();
+        table.decrementLabelCounter();
+        int exitlabel = table.getLabelCounter();
+        table.decrementLabelCounter();
 
         //Place start label
         output.push_back("LABEL " + std::to_string(startlabel));

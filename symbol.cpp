@@ -146,12 +146,12 @@ void SymbolTable::decrementLocalCounter()
     }
 }
 
-int SymbolTable::getControlCounter()
+int SymbolTable::getLabelCounter()
 {
     return functionlabelcounter;
 }
 
-void SymbolTable::decrementControlCounter()
+void SymbolTable::decrementLabelCounter()
 {
     functionlabelcounter++;
     if(functionlabelcounter > 999)
